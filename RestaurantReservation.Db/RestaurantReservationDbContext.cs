@@ -18,8 +18,39 @@ namespace RestaurantReservation.Db
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                "Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = RestaurantReservationCore"
+                "Data Source = localhost\\SQLEXPRESS; Initial Catalog = RestaurantReservationCore; Trusted_Connection=True; TrustServerCertificate=True;"
                 );
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MenuItem>()
+              .Property(mi => mi.Price)
+              .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Order>()
+              .Property(mi => mi.TotalAmount)
+              .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Restaurant)
+                .WithMany(rest => rest.Reservations)
+                .HasForeignKey(r => r.RestaurantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Table)
+                .WithMany(rest => rest.Reservations)
+                .HasForeignKey(r => r.TableId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(r => r.Order)
+                .WithMany(rest => rest.OrderItems)
+                .HasForeignKey(r => r.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }
