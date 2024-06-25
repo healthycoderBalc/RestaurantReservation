@@ -29,7 +29,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
         {
             foreach (var demo in _functionalityDemonstrations)
             {
-                demo.Demonstrate();
+                demo.Demonstrate().GetAwaiter().GetResult();
                 Console.WriteLine();
             }
         }

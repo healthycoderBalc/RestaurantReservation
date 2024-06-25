@@ -22,7 +22,7 @@ namespace RestaurantReservation.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public int CreateCustomer(string firstName, string lastName, string email, string phoneNumber)
+        public async Task<int> CreateCustomer(string firstName, string lastName, string email, string phoneNumber)
         {
             var newCustomer = new Customer
             {
@@ -33,14 +33,14 @@ namespace RestaurantReservation.Repositories
             };
 
             _dbContext.Customers.Add(newCustomer);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Customer created with ID: {newCustomer.CustomerId}");
             return newCustomer.CustomerId;
         }
 
-        public void ReadCustomer(int customerId)
+        public async Task ReadCustomer(int customerId)
         {
-            var customer = _dbContext.Customers.Find(customerId);
+            var customer = await _dbContext.Customers.FindAsync(customerId);
 
             if (customer == null)
             {
@@ -50,9 +50,9 @@ namespace RestaurantReservation.Repositories
             Console.WriteLine($"Customer found: ID {customer.CustomerId} - {customer.FirstName} {customer.LastName}, Email: {customer.Email}, Phone: {customer.PhoneNumber}");
         }
 
-        public void UpdateCustomer(int customerId, string newEmail, string newPhoneNumber)
+        public async Task UpdateCustomer(int customerId, string newEmail, string newPhoneNumber)
         {
-            var customer = _dbContext.Customers.Find(customerId);
+            var customer = await _dbContext.Customers.FindAsync(customerId);
             if (customer == null)
             {
                 Console.WriteLine($"Customer with ID {customerId} not found.");
@@ -61,20 +61,20 @@ namespace RestaurantReservation.Repositories
             customer.Email = newEmail;
             customer.PhoneNumber = newPhoneNumber;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Customer {customerId} updated successfully.");
         }
 
-        public void DeleteCustomer(int customerId)
+        public async Task DeleteCustomer(int customerId)
         {
-            var customer = _dbContext.Customers.Find(customerId);
+            var customer = await _dbContext.Customers.FindAsync(customerId);
             if (customer == null)
             {
                 Console.WriteLine($"Customer with ID {customerId} not found.");
                 return;
             }
             _dbContext.Remove(customer);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Customer {customerId} deleted successfully.");
         }
     }

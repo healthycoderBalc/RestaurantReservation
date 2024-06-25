@@ -9,26 +9,28 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class MenuItemFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public void Demonstrate()
+        public async Task Demonstrate()
         {
             using (var menuItemDemonstration = new MenuItemRepository())
             {
+                Console.WriteLine("----------MENU ITEM DEMONSTRATION---------");
+
                 int restaurantId = 1;
                 string name = "BBQ";
                 string description = "Asado Argentino";
                 decimal price = 59.65M;
-                int createdMenuItemId = menuItemDemonstration.CreateMenuItem(restaurantId, name, description, price);
-                menuItemDemonstration.ReadMenuItem(createdMenuItemId);
+                int createdMenuItemId = await menuItemDemonstration.CreateMenuItem(restaurantId, name, description, price);
+                await menuItemDemonstration.ReadMenuItem(createdMenuItemId);
 
                 int newRestaurantId = 2;
                 string newName = "Fried Chicken";
                 string newDescription = "The Best Chicken in the Town";
                 decimal newPrice = 39.65M;
-                menuItemDemonstration.UpdateMenuItem(createdMenuItemId, newRestaurantId, newName, newDescription, newPrice);
-                menuItemDemonstration.ReadMenuItem(createdMenuItemId);
+                await menuItemDemonstration.UpdateMenuItem(createdMenuItemId, newRestaurantId, newName, newDescription, newPrice);
+                await menuItemDemonstration.ReadMenuItem(createdMenuItemId);
 
-                menuItemDemonstration.DeleteMenuItem(createdMenuItemId);
-                menuItemDemonstration.ReadMenuItem(createdMenuItemId);
+                await menuItemDemonstration.DeleteMenuItem(createdMenuItemId);
+                await menuItemDemonstration.ReadMenuItem(createdMenuItemId);
             }
         }
     }

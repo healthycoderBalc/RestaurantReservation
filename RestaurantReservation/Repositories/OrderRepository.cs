@@ -24,15 +24,15 @@ namespace RestaurantReservation.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public int CreateOrder(int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
+        public async Task<int> CreateOrder(int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
         {
-            var reservation = _dbContext.Reservations.Find(reservationId);
+            var reservation = await _dbContext.Reservations.FindAsync(reservationId);
             if (reservation == null)
             {
                 Console.WriteLine($"Reservation with ID {reservationId} not found.");
                 return 0;
             }
-            var employee = _dbContext.Employees.Find(employeeId);
+            var employee = await _dbContext.Employees.FindAsync(employeeId);
 
             if (employee == null)
             {
@@ -49,15 +49,15 @@ namespace RestaurantReservation.Repositories
             };
 
             _dbContext.Orders.Add(newOrder);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Order created with ID: {newOrder.OrderId}");
 
             return newOrder.OrderId;
         }
 
-        public void ReadOrder(int orderId)
+        public async Task ReadOrder(int orderId)
         {
-            var order = _dbContext.Orders.Find(orderId);
+            var order = await _dbContext.Orders.FindAsync(orderId);
 
             if (order == null)
             {
@@ -67,21 +67,21 @@ namespace RestaurantReservation.Repositories
             Console.WriteLine($"Order found: ID {order.OrderId} - Reservation Nº: {order.ReservationId}, Employee: {order.Employee.FirstName} {order.Employee.LastName}, Date: {order.OrderDate}, Total Amount: {order.TotalAmount}");
         }
 
-        public void UpdateOrder(int orderId, int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
+        public async Task UpdateOrder(int orderId, int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
         {
-            var order = _dbContext.Orders.Find(orderId);
+            var order = await _dbContext.Orders.FindAsync(orderId);
             if (order == null)
             {
                 Console.WriteLine($"Order with ID {orderId} not found.");
                 return;
             }
-            var newReservation = _dbContext.Reservations.Find(reservationId);
+            var newReservation = await _dbContext.Reservations.FindAsync(reservationId);
             if (newReservation == null)
             {
                 Console.WriteLine($"Reservation with ID {reservationId} not found.");
                 return;
             }
-            var newEmployee = _dbContext.Employees.Find(employeeId);
+            var newEmployee = await _dbContext.Employees.FindAsync(employeeId);
 
             if (newEmployee == null)
             {
@@ -98,46 +98,49 @@ namespace RestaurantReservation.Repositories
             Console.WriteLine($"Order {orderId} updated successfully.");
         }
 
-        public void DeleteOrder(int orderId)
+        public async Task DeleteOrder(int orderId)
         {
-            var order = _dbContext.Orders.Find(orderId);
+            var order = await _dbContext.Orders.FindAsync(orderId);
             if (order == null)
             {
                 Console.WriteLine($"Order with ID {orderId} not found.");
                 return;
             }
             _dbContext.Remove(order);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Order {orderId} deleted successfully.");
         }
 
-        public List<Order> ListOrderAndMenuItems(int reservationId)
+        public async Task<List<Order>> ListOrderAndMenuItems(int reservationId)
         {
-            List<Order> orders = _dbContext.Orders
+            List<Order> orders = await _dbContext.Orders
                 .Where(o => o.ReservationId == reservationId)
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.MenuItem)
-                .ToList();
+                .ToListAsync();
 
             return orders;
         }
 
-        public List<MenuItem> ListOrderedMenuItems(int reservationId)
+        public async Task<List<MenuItem>> ListOrderedMenuItems(int reservationId)
         {
-            List<MenuItem> menuItems= _dbContext.OrderItems
+            List<MenuItem> menuItems= await _dbContext.OrderItems
                 .Where(oi => oi.Order.ReservationId == reservationId)
                 .Select(oi => oi.MenuItem)
-                .ToList();
+                .ToListAsync();
 
             return menuItems;
         }
 
-        public decimal CalculateAverageOrderAmount(int employeeId)
+        public async Task<decimal> CalculateAverageOrderAmount(int employeeId)
         {
-            List<Order> employeeOrders = _dbContext.Orders.Where(o => o.EmployeeId == employeeId).ToList();
+            List<Order> employeeOrders = await _dbContext.Orders
+                .Where(o => o.EmployeeId == employeeId)
+                .ToListAsync();
 
-            if (!employeeOrders.Any()) return 0;
-            decimal average = employeeOrders.Average(o => o.TotalAmount);
+            if (employeeOrders.Count == 0) return 0;
+            decimal average = employeeOrders
+                .Average(o => o.TotalAmount);
 
             return average;
         }

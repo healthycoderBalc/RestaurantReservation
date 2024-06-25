@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RestaurantReservation.Db;
 using RestaurantReservation.Db.Models;
 using System;
@@ -23,22 +24,22 @@ namespace RestaurantReservation.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public int CreateReservation(int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
+        public async Task<int> CreateReservation(int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
         {
-            var customer = _dbContext.Customers.Find(customerId);
+            var customer = await _dbContext.Customers.FindAsync(customerId);
             if (customer == null)
             {
                 Console.WriteLine($"Customer with ID {customerId} not found.");
                 return 0;
             }
-            var restaurant = _dbContext.Restaurants.Find(restaurantId);
+            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
 
             if (restaurant == null)
             {
                 Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
                 return 0;
             }
-            var table = _dbContext.Tables.Find(tableId);
+            var table = await _dbContext.Tables.FindAsync(tableId);
 
             if (table == null)
             {
@@ -55,16 +56,16 @@ namespace RestaurantReservation.Repositories
             };
 
             _dbContext.Reservations.Add(newReservation);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Reservation created with ID: {newReservation.ReservationId}");
 
             return newReservation.ReservationId;
         }
 
 
-        public void ReadReservation(int reservationId)
+        public async Task ReadReservation(int reservationId)
         {
-            var reservation = _dbContext.Reservations.Find(reservationId);
+            var reservation = await _dbContext.Reservations.FindAsync(reservationId);
 
             if (reservation == null)
             {
@@ -74,28 +75,28 @@ namespace RestaurantReservation.Repositories
             Console.WriteLine($"Reservation found: ID {reservation.ReservationId} - Customer: {reservation.Customer.FirstName} {reservation.Customer.FirstName}, Restaurant: {reservation.Restaurant.Name}, Table: {reservation.Table.TableId}, Date: {reservation.ReservationDate}, Size: {reservation.PartySize}");
         }
 
-        public void UpdateReservation(int reservationId, int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
+        public async Task UpdateReservation(int reservationId, int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
         {
-            var reservation = _dbContext.Reservations.Find(reservationId);
+            var reservation = await _dbContext.Reservations.FindAsync(reservationId);
             if (reservation == null)
             {
                 Console.WriteLine($"Reservation with ID {reservationId} not found.");
                 return;
             }
-            var newCustomer = _dbContext.Customers.Find(customerId);
+            var newCustomer = await _dbContext.Customers.FindAsync(customerId);
             if (newCustomer == null)
             {
                 Console.WriteLine($"Customer with ID {customerId} not found.");
                 return;
             }
-            var newRestaurant = _dbContext.Restaurants.Find(restaurantId);
+            var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
 
             if (newRestaurant == null)
             {
                 Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
                 return;
             }
-            var newTable = _dbContext.Tables.Find(tableId);
+            var newTable = await _dbContext.Tables.FindAsync(tableId);
 
             if (newTable == null)
             {
@@ -108,28 +109,30 @@ namespace RestaurantReservation.Repositories
             reservation.ReservationDate = reservationDate;
             reservation.PartySize = partySize;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Reservation {reservationId} updated successfully.");
         }
 
-        public void DeleteReservation(int reservationId)
+        public async Task DeleteReservation(int reservationId)
         {
-            var reservation = _dbContext.Reservations.Find(reservationId);
+            var reservation = await _dbContext.Reservations.FindAsync(reservationId);
             if (reservation == null)
             {
                 Console.WriteLine($"Reservation with ID {reservationId} not found.");
                 return;
             }
             _dbContext.Remove(reservation);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Reservation {reservationId} deleted successfully.");
         }
 
-        public List<Reservation> GetReservationsByCustomer(int customerId)
+        public async Task<List<Reservation>> GetReservationsByCustomer(int customerId)
         {
-            List<Reservation> reservations = _dbContext.Reservations
+            List<Reservation> reservations = await _dbContext.Reservations
                 .Where(r => r.CustomerId == customerId)
-                .ToList();
+                .Include(r => r.Table)
+                .Include(r => r.Restaurant)
+                .ToListAsync();
 
             return reservations;
         }

@@ -9,25 +9,27 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class RestaurantFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public void Demonstrate()
+        public async Task Demonstrate()
         {
             using (var restaurantDemonstration = new RestaurantRepository())
             {
+                Console.WriteLine("----------RESTAURANT DEMONSTRATION---------");
+
                 string name = "Buonjorno";
                 string address = "123 Main St";
                 string phoneNumber = "555-1234";
                 string openingHours = "9AM - 9PM";
-                int createdRestaurantId = restaurantDemonstration.CreateRestaurant(name, address, phoneNumber, openingHours);
-                restaurantDemonstration.ReadRestaurant(createdRestaurantId);
+                int createdRestaurantId = await restaurantDemonstration.CreateRestaurant(name, address, phoneNumber, openingHours);
+                await restaurantDemonstration.ReadRestaurant(createdRestaurantId);
 
                 string newAddress = "456 Yellow St";
                 string newPhoneNumber = "555-5678";
                 string newOpeningHours = "9AM - 7PM";
-                restaurantDemonstration.UpdateRestaurant(createdRestaurantId, newAddress, newPhoneNumber, newOpeningHours);
-                restaurantDemonstration.ReadRestaurant(createdRestaurantId);
+                await restaurantDemonstration.UpdateRestaurant(createdRestaurantId, newAddress, newPhoneNumber, newOpeningHours);
+                await restaurantDemonstration.ReadRestaurant(createdRestaurantId);
 
-                restaurantDemonstration.DeleteRestaurant(createdRestaurantId);
-                restaurantDemonstration.ReadRestaurant(createdRestaurantId);
+                await restaurantDemonstration.DeleteRestaurant(createdRestaurantId);
+                await restaurantDemonstration.ReadRestaurant(createdRestaurantId);
             }
         }
     }

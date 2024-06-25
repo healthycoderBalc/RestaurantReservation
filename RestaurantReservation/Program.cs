@@ -9,22 +9,5 @@ namespace RestaurantReservation
             var demonstrationManager = new DemonstrationManager();
             demonstrationManager.RunAllDemonstrations();
         }
-
-
-
-
-
-
-
-
-
-
-
-       
-
-       
-
-       
-
     }
 }

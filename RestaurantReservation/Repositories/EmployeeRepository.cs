@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestaurantReservation.Repositories
 {
@@ -23,9 +24,9 @@ namespace RestaurantReservation.Repositories
             GC.SuppressFinalize(this);
         }
 
-        public int CreateEmployee(int restaurantId, string firstName, string lastName, string position)
+        public async Task<int> CreateEmployee(int restaurantId, string firstName, string lastName, string position)
         {
-            var restaurant = _dbContext.Restaurants.Find(restaurantId);
+            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
             {
                 Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
@@ -41,14 +42,14 @@ namespace RestaurantReservation.Repositories
             };
 
             _dbContext.Employees.Add(newEmployee);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Employee created with ID: {newEmployee.EmployeeId}");
             return newEmployee.EmployeeId;
         }
 
-        public void ReadEmployee(int employeeId)
+        public async Task ReadEmployee(int employeeId)
         {
-            var employee = _dbContext.Employees.Find(employeeId);
+            var employee = await _dbContext.Employees.FindAsync(employeeId);
 
             if (employee == null)
             {
@@ -59,10 +60,10 @@ namespace RestaurantReservation.Repositories
             Console.WriteLine($"Employee found: ID {employee.EmployeeId} - {employee.FirstName} {employee.LastName}, Position: {employee.Position}");
         }
 
-        public void UpdateEmployee(int employeeId, int restaurantId, string firstName, string lastName, string position)
+        public async Task UpdateEmployee(int employeeId, int restaurantId, string firstName, string lastName, string position)
         {
-            var employee = _dbContext.Employees.Find(employeeId);
-            var newRestaurant = _dbContext.Restaurants.Find(restaurantId);
+            var employee = await _dbContext.Employees.FindAsync(employeeId);
+            var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (employee == null)
             {
                 Console.WriteLine($"Employee with ID {employeeId} not found.");
@@ -79,13 +80,13 @@ namespace RestaurantReservation.Repositories
             employee.LastName = lastName;
             employee.Position = position;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Employee {employeeId} updated successfully.");
         }
 
-        public void DeleteEmployee(int employeeId)
+        public async Task DeleteEmployee(int employeeId)
         {
-            var employee = _dbContext.Employees.Find(employeeId);
+            var employee = await _dbContext.Employees.FindAsync(employeeId);
             if (employee == null)
             {
                 Console.WriteLine($"Employee with ID {employeeId} not found.");
@@ -93,14 +94,17 @@ namespace RestaurantReservation.Repositories
             }
 
             _dbContext.Employees.Remove(employee);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Employee {employeeId} deleted successfully.");
         }
 
-        public List<Employee> ListManagers()
+        public async Task<List<Employee>> ListManagers()
         {
             var managerPosition = "Manager";
-            List<Employee> managers = _dbContext.Employees.Where(e => e.Position == managerPosition).ToList();
+            List<Employee> managers = await _dbContext.Employees
+                .Where(e => e.Position == managerPosition)
+                .ToListAsync();
+
             return managers;
         }
 

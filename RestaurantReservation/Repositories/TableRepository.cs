@@ -23,9 +23,9 @@ namespace RestaurantReservation.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public int CreateTable(int restaurantId, int capacity)
+        public async Task<int> CreateTable(int restaurantId, int capacity)
         {
-            var restaurant = _dbContext.Restaurants.Find(restaurantId);
+            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
             {
                 Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
@@ -39,15 +39,15 @@ namespace RestaurantReservation.Repositories
             };
 
             _dbContext.Tables.Add(newTable);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Table created with ID: {newTable.TableId}");
 
             return newTable.TableId;
         }
 
-        public void ReadTable(int tableId)
+        public async Task ReadTable(int tableId)
         {
-            var table = _dbContext.Tables.Find(tableId);
+            var table = await _dbContext.Tables.FindAsync(tableId);
 
             if (table == null)
             {
@@ -57,10 +57,10 @@ namespace RestaurantReservation.Repositories
             Console.WriteLine($"Table found: ID {table.TableId} - In Restaurant: {table.Restaurant.Name}, Capacity: {table.Capacity}");
         }
 
-        public void UpdateTable(int tableId, int restaurantId, int capacity)
+        public async Task UpdateTable(int tableId, int restaurantId, int capacity)
         {
-            var table = _dbContext.Tables.Find(tableId);
-            var newRestaurant = _dbContext.Restaurants.Find(restaurantId);
+            var table = await _dbContext.Tables.FindAsync(tableId);
+            var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (table == null)
             {
                 Console.WriteLine($"Table with ID {tableId} not found.");
@@ -74,20 +74,20 @@ namespace RestaurantReservation.Repositories
             table.Restaurant = newRestaurant;
             table.Capacity = capacity;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Table {tableId} updated successfully.");
         }
 
-        public void DeleteTable(int tableId)
+        public async Task DeleteTable(int tableId)
         {
-            var table = _dbContext.Tables.Find(tableId);
+            var table = await _dbContext.Tables.FindAsync(tableId);
             if (table == null)
             {
                 Console.WriteLine($"Table with ID {tableId} not found.");
                 return;
             }
             _dbContext.Remove(table);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Table {tableId} deleted successfully.");
         }
     }

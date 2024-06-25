@@ -9,22 +9,24 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class TableFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public void Demonstrate()
+        public async Task Demonstrate()
         {
             using (var tableDemonstration = new TableRepository())
             {
+                Console.WriteLine("----------TABLE DEMONSTRATION---------");
+
                 int restaurantId = 1;
                 int capacity = 10;
-                int createdTableId = tableDemonstration.CreateTable(restaurantId, capacity);
-                tableDemonstration.ReadTable(createdTableId);
+                int createdTableId = await tableDemonstration.CreateTable(restaurantId, capacity);
+                await tableDemonstration.ReadTable(createdTableId);
 
                 int newRestaurantId = 2;
                 int newCapacity = 6;
-                tableDemonstration.UpdateTable(createdTableId, newRestaurantId, newCapacity);
-                tableDemonstration.ReadTable(createdTableId);
+                await tableDemonstration.UpdateTable(createdTableId, newRestaurantId, newCapacity);
+                await tableDemonstration.ReadTable(createdTableId);
 
-                tableDemonstration.DeleteTable(createdTableId);
-                tableDemonstration.ReadTable(createdTableId);
+                await tableDemonstration.DeleteTable(createdTableId);
+                await tableDemonstration.ReadTable(createdTableId);
             }
         }
     }

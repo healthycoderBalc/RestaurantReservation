@@ -22,7 +22,7 @@ namespace RestaurantReservation.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public int CreateRestaurant(string name, string address, string phoneNumber, string openingHours)
+        public async Task<int> CreateRestaurant(string name, string address, string phoneNumber, string openingHours)
         {
             var newRestaurant = new Restaurant
             {
@@ -33,17 +33,15 @@ namespace RestaurantReservation.Repositories
             };
 
             _dbContext.Restaurants.Add(newRestaurant);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Restaurant created with ID: {newRestaurant.RestaurantId}");
 
             return newRestaurant.RestaurantId;
         }
 
-
-
-        public void ReadRestaurant(int restaurantId)
+        public async Task ReadRestaurant(int restaurantId)
         {
-            var restaurant = _dbContext.Restaurants.Find(restaurantId);
+            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
 
             if (restaurant == null)
             {
@@ -53,9 +51,9 @@ namespace RestaurantReservation.Repositories
             Console.WriteLine($"Restaurant found: ID {restaurant.RestaurantId} - {restaurant.Name}, Address: {restaurant.Address}, Opening Hours: {restaurant.OpeningHours}, Phone: {restaurant.PhoneNumber}");
         }
 
-        public void UpdateRestaurant(int restaurantId, string newAddress, string newPhoneNumber, string newOpeningHours)
+        public async Task UpdateRestaurant(int restaurantId, string newAddress, string newPhoneNumber, string newOpeningHours)
         {
-            var restaurant = _dbContext.Restaurants.Find(restaurantId);
+            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
             {
                 Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
@@ -65,20 +63,20 @@ namespace RestaurantReservation.Repositories
             restaurant.PhoneNumber = newPhoneNumber;
             restaurant.OpeningHours = newOpeningHours;
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Restaurant {restaurantId} updated successfully.");
         }
 
-        public void DeleteRestaurant(int restaurantId)
+        public async Task DeleteRestaurant(int restaurantId)
         {
-            var restaurant = _dbContext.Restaurants.Find(restaurantId);
+            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
             {
                 Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
                 return;
             }
             _dbContext.Remove(restaurant);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Restaurant {restaurantId} deleted successfully.");
         }
     }

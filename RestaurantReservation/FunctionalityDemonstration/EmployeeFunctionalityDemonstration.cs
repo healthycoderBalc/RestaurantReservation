@@ -1,4 +1,5 @@
-﻿using RestaurantReservation.Repositories;
+﻿using RestaurantReservation.Db.Models;
+using RestaurantReservation.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,27 +10,40 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class EmployeeFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public void Demonstrate()
+        public async Task Demonstrate()
         {
             using (var employeeDemonstration = new EmployeeRepository())
             {
+                Console.WriteLine("----------EMPLOYEE DEMONSTRATION---------");
 
                 int restaurantId = 1;
                 string firstName = "Mary";
                 string lastName = "Jane";
                 string position = "Manager";
-                var newEmployeeId = employeeDemonstration.CreateEmployee(restaurantId, firstName, lastName, position);
-                employeeDemonstration.ReadEmployee(newEmployeeId);
+                var newEmployeeId = await employeeDemonstration.CreateEmployee(restaurantId, firstName, lastName, position);
+                await employeeDemonstration.ReadEmployee(newEmployeeId);
 
                 int newRestaurantId = 1;
                 string newFirstName = "Michelle";
                 string newLastName = "Jones";
                 string newPosition = "Supervisor";
-                employeeDemonstration.UpdateEmployee(newEmployeeId, newRestaurantId, newFirstName, newLastName, newPosition);
-                employeeDemonstration.ReadEmployee(newEmployeeId);
+                await employeeDemonstration.UpdateEmployee(newEmployeeId, newRestaurantId, newFirstName, newLastName, newPosition);
+                await employeeDemonstration.ReadEmployee(newEmployeeId);
 
-                employeeDemonstration.DeleteEmployee(newEmployeeId);
-                employeeDemonstration.ReadEmployee(newEmployeeId);
+                await employeeDemonstration.DeleteEmployee(newEmployeeId);
+                await employeeDemonstration.ReadEmployee(newEmployeeId);
+
+                List<Employee> managers = await employeeDemonstration.ListManagers();
+                Console.WriteLine();
+                Console.WriteLine("Managers: ");
+                if (managers.Count > 0)
+                {
+                    foreach (var manager in managers)
+                    {
+                        Console.WriteLine($"{manager.EmployeeId}. {manager.FirstName} {manager.LastName}");
+                    }
+                }
+
             }
         }
     }
