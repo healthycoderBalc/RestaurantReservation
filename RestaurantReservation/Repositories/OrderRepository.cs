@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RestaurantReservation.Db;
 using RestaurantReservation.Db.Models;
 using System;
@@ -54,8 +55,6 @@ namespace RestaurantReservation.Repositories
             return newOrder.OrderId;
         }
 
-
-
         public void ReadOrder(int orderId)
         {
             var order = _dbContext.Orders.Find(orderId);
@@ -110,6 +109,37 @@ namespace RestaurantReservation.Repositories
             _dbContext.Remove(order);
             _dbContext.SaveChanges();
             Console.WriteLine($"Order {orderId} deleted successfully.");
+        }
+
+        public List<Order> ListOrderAndMenuItems(int reservationId)
+        {
+            List<Order> orders = _dbContext.Orders
+                .Where(o => o.ReservationId == reservationId)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.MenuItem)
+                .ToList();
+
+            return orders;
+        }
+
+        public List<MenuItem> ListOrderedMenuItems(int reservationId)
+        {
+            List<MenuItem> menuItems= _dbContext.OrderItems
+                .Where(oi => oi.Order.ReservationId == reservationId)
+                .Select(oi => oi.MenuItem)
+                .ToList();
+
+            return menuItems;
+        }
+
+        public decimal CalculateAverageOrderAmount(int employeeId)
+        {
+            List<Order> employeeOrders = _dbContext.Orders.Where(o => o.EmployeeId == employeeId).ToList();
+
+            if (!employeeOrders.Any()) return 0;
+            decimal average = employeeOrders.Average(o => o.TotalAmount);
+
+            return average;
         }
     }
 }

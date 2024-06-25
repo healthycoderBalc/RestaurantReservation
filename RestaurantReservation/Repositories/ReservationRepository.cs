@@ -62,7 +62,6 @@ namespace RestaurantReservation.Repositories
         }
 
 
-
         public void ReadReservation(int reservationId)
         {
             var reservation = _dbContext.Reservations.Find(reservationId);
@@ -124,6 +123,15 @@ namespace RestaurantReservation.Repositories
             _dbContext.Remove(reservation);
             _dbContext.SaveChanges();
             Console.WriteLine($"Reservation {reservationId} deleted successfully.");
+        }
+
+        public List<Reservation> GetReservationsByCustomer(int customerId)
+        {
+            List<Reservation> reservations = _dbContext.Reservations
+                .Where(r => r.CustomerId == customerId)
+                .ToList();
+
+            return reservations;
         }
     }
 }

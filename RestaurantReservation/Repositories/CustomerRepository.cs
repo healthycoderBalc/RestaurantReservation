@@ -38,8 +38,6 @@ namespace RestaurantReservation.Repositories
             return newCustomer.CustomerId;
         }
 
-
-
         public void ReadCustomer(int customerId)
         {
             var customer = _dbContext.Customers.Find(customerId);

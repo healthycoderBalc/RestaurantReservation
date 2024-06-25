@@ -96,5 +96,13 @@ namespace RestaurantReservation.Repositories
             _dbContext.SaveChanges();
             Console.WriteLine($"Employee {employeeId} deleted successfully.");
         }
+
+        public List<Employee> ListManagers()
+        {
+            var managerPosition = "Manager";
+            List<Employee> managers = _dbContext.Employees.Where(e => e.Position == managerPosition).ToList();
+            return managers;
+        }
+
     }
 }
