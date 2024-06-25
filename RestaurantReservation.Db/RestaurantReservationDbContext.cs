@@ -15,7 +15,6 @@ namespace RestaurantReservation.Db
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
-        // later remove
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
@@ -97,7 +96,7 @@ namespace RestaurantReservation.Db
 
             var employeeList = new Employee[]
             {
-                  new Employee { EmployeeId = 1, RestaurantId = 1, FirstName = "Sam", LastName = "Wilson",
+                new Employee { EmployeeId = 1, RestaurantId = 1, FirstName = "Sam", LastName = "Wilson",
                     Position = "Manager" },
                 new Employee { EmployeeId = 2, RestaurantId = 1, FirstName = "Chris", LastName = "Evans",
                     Position = "Chef" },
