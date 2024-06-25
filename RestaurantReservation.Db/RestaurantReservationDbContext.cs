@@ -124,29 +124,29 @@ namespace RestaurantReservation.Db
 
             var reservationList = new Reservation[] {
                 new Reservation { ReservationId = 1, CustomerId = 1, RestaurantId = 1, TableId = 1,
-                    ReservationDate = DateTime.Now.AddDays(1), PartySize = 4 },
+                    ReservationDate = new DateTime(2024, 6, 26), PartySize = 4 },
                 new Reservation { ReservationId = 2, CustomerId = 2, RestaurantId = 1, TableId = 2,
-                    ReservationDate = DateTime.Now.AddDays(2), PartySize = 6 },
+                    ReservationDate = new DateTime(2024, 6, 27), PartySize = 6 },
                 new Reservation { ReservationId = 3, CustomerId = 3, RestaurantId = 2, TableId = 3,
-                    ReservationDate = DateTime.Now.AddDays(3), PartySize = 4 },
+                    ReservationDate = new DateTime(2024, 6, 28), PartySize = 4 },
                 new Reservation { ReservationId = 4, CustomerId = 4, RestaurantId = 2, TableId = 4,
-                    ReservationDate = DateTime.Now.AddDays(4), PartySize = 2 },
+                    ReservationDate = new DateTime(2024, 6, 29), PartySize = 2 },
                 new Reservation { ReservationId = 5, CustomerId = 5, RestaurantId = 3, TableId = 5,
-                    ReservationDate = DateTime.Now.AddDays(5), PartySize = 4 }
+                    ReservationDate = new DateTime(2024, 6, 30), PartySize = 4 }
             };
 
             var orderList = new Order[]
             {
                 new Order { OrderId = 1, ReservationId = 1, EmployeeId = 2,
-                       OrderDate = DateTime.Now.AddDays(1), TotalAmount = 50.00m },
+                       OrderDate = new DateTime(2024, 6, 26), TotalAmount = 50.00m },
                 new Order { OrderId = 2, ReservationId = 2, EmployeeId = 1,
-                    OrderDate = DateTime.Now.AddDays(2), TotalAmount = 70.00m },
+                    OrderDate = new DateTime(2024, 6, 27), TotalAmount = 70.00m },
                 new Order { OrderId = 3, ReservationId = 3, EmployeeId = 4,
-                    OrderDate = DateTime.Now.AddDays(3), TotalAmount = 40.00m },
+                    OrderDate = new DateTime(2024, 6, 28), TotalAmount = 40.00m },
                 new Order { OrderId = 4, ReservationId = 4, EmployeeId = 3,
-                    OrderDate = DateTime.Now.AddDays(4), TotalAmount = 30.00m },
+                    OrderDate = new DateTime(2024, 6, 29), TotalAmount = 30.00m },
                 new Order { OrderId = 5, ReservationId = 5, EmployeeId = 5,
-                    OrderDate = DateTime.Now.AddDays(5), TotalAmount = 80.00m }
+                    OrderDate = new DateTime(2024, 6, 30), TotalAmount = 80.00m }
             };
 
             var orderItemList = new OrderItem[]
