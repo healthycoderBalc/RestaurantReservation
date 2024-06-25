@@ -108,5 +108,12 @@ namespace RestaurantReservation.Repositories
             return managers;
         }
 
+        public async Task<List<EmployeeWithRestaurantDetails>> GetEmployeesWithRestaurantDetailsFromView()
+        {
+            List<EmployeeWithRestaurantDetails> employees = await _dbContext.EmployeesWithRestaurantDetails
+                .ToListAsync();
+            return employees;
+        }
+
     }
 }

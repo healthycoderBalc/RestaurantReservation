@@ -136,5 +136,12 @@ namespace RestaurantReservation.Repositories
 
             return reservations;
         }
+
+        public async Task<List<ReservationWithDetails>> GetReservationsWithCustomerAndRestaurantInformationFromView()
+        {
+            List<ReservationWithDetails> reservations = await _dbContext.ReservationsWithDetails
+                .ToListAsync();
+            return reservations;
+        }
     }
 }

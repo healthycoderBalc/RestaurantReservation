@@ -47,6 +47,17 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 }
                 Console.WriteLine();
 
+                Console.WriteLine("Get reservations with customer and restaurant information (from view)");
+                List<ReservationWithDetails> reservationsFromView = await reservationDemonstration.GetReservationsWithCustomerAndRestaurantInformationFromView();
+                if (reservationsFromView.Count > 0)
+                {
+                    foreach (ReservationWithDetails reservation in reservationsFromView)
+                    {
+                        Console.WriteLine($"ID: {reservation.ReservationId} - ReservationDate: {reservation.ReservationDate},  Size: {reservation.PartySize} | Customer: {reservation.CustomerId}. {reservation.CustomerFirstName} {reservation.CustomerLastName}. Restaurant: {reservation.RestaurantId}. {reservation.RestaurantName}");
+                    }
+                }
+                Console.WriteLine();
+
 
             }
         }

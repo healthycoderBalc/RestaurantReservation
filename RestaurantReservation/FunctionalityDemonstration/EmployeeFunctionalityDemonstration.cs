@@ -43,6 +43,17 @@ namespace RestaurantReservation.FunctionalityDemonstration
                         Console.WriteLine($"{manager.EmployeeId}. {manager.FirstName} {manager.LastName}");
                     }
                 }
+                Console.WriteLine();
+                Console.WriteLine("Get employees with restaurant details (from view)");
+                List<EmployeeWithRestaurantDetails> employeesFromView = await employeeDemonstration.GetEmployeesWithRestaurantDetailsFromView();
+                if (employeesFromView.Count > 0)
+                {
+                    foreach (EmployeeWithRestaurantDetails employee in employeesFromView)
+                    {
+                        Console.WriteLine($"{employee.EmployeeId}. {employee.FirstName} {employee.LastName} Position: {employee.Position}| Restaurant: {employee.RestaurantId}. {employee.RestaurantName}, Address: {employee.Address}, Phone number: {employee.PhoneNumber}, Opening Hours: {employee.OpeningHours}");
+                    }
+                }
+                Console.WriteLine();
 
             }
         }

@@ -15,6 +15,9 @@ namespace RestaurantReservation.Db
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        public DbSet<ReservationWithDetails> ReservationsWithDetails { get; set; }
+        public DbSet<EmployeeWithRestaurantDetails> EmployeesWithRestaurantDetails { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
@@ -53,6 +56,9 @@ namespace RestaurantReservation.Db
                 .OnDelete(DeleteBehavior.Restrict);
 
             SeedData(modelBuilder);
+
+            modelBuilder.Entity<ReservationWithDetails>().HasNoKey().ToView("ReservationsWithDetails");
+            modelBuilder.Entity<EmployeeWithRestaurantDetails>().HasNoKey().ToView("EmployeesWithRestaurantDetails");
         }
 
         private void SeedData(ModelBuilder modelBuilder)
