@@ -1,5 +1,4 @@
-﻿using RestaurantReservation.Db;
-using RestaurantReservation.Db.Models;
+﻿using RestaurantReservation.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,76 +7,28 @@ using System.Threading.Tasks;
 
 namespace RestaurantReservation.FunctionalityDemonstration
 {
-    public class CustomerFunctionalityDemonstration : IDisposable
+    public class CustomerFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        private readonly RestaurantReservationDbContext _dbContext;
-
-        public void Dispose()
+        public void Demonstrate()
         {
-            _dbContext.Dispose();
-            GC.SuppressFinalize(this);
-        }
-        public CustomerFunctionalityDemonstration()
-        {
-            _dbContext = new RestaurantReservationDbContext();
-        }
-
-        public int CreateCustomer(string firstName, string lastName, string email, string phoneNumber)
-        {
-            var newCustomer = new Customer
+            using (var customerDemonstration = new CustomerRepository())
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                PhoneNumber = phoneNumber
-            };
+                string firstName = "Peter";
+                string lastName = "Stone";
+                string email = "peter.stone@example.com";
+                string phoneNumber = "1234567890";
 
-            _dbContext.Customers.Add(newCustomer);
-            _dbContext.SaveChanges();
-            Console.WriteLine(newCustomer.CustomerId);
-            return newCustomer.CustomerId;
-        }
+                int createdCustomerId = customerDemonstration.CreateCustomer(firstName, lastName, email, phoneNumber);
+                customerDemonstration.ReadCustomer(createdCustomerId);
 
+                string newEmail = "newpeter.stone@example.com";
+                string newPhoneNumber = "9876543210";
+                customerDemonstration.UpdateCustomer(createdCustomerId, newEmail, newPhoneNumber);
+                customerDemonstration.ReadCustomer(createdCustomerId);
 
-
-        public void ReadCustomer(int customerId)
-        {
-            var customer = _dbContext.Customers.Find(customerId);
-
-            if (customer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
+                customerDemonstration.DeleteCustomer(createdCustomerId);
+                customerDemonstration.ReadCustomer(createdCustomerId);
             }
-            Console.WriteLine($"Customer found: {customer.FirstName} {customer.LastName}, Email: {customer.Email}, Phone: {customer.PhoneNumber}");
-        }
-
-        public void UpdateCustomer (int customerId, string newEmail, string newPhoneNumber)
-        {
-            var customer = _dbContext.Customers.Find(customerId);
-            if (customer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
-            }
-            customer.Email = newEmail;
-            customer.PhoneNumber = newPhoneNumber;
-
-            _dbContext.SaveChanges();
-            Console.WriteLine($"Customer {customerId} updated successfully.");
-        }
-
-        public void DeleteCustomer(int customerId)
-        {
-            var customer = _dbContext.Customers.Find(customerId);
-            if (customer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
-            }
-            _dbContext.Remove(customer);
-            _dbContext.SaveChanges();
-            Console.WriteLine($"Customer {customerId} deleted successfully.");
         }
     }
 }
