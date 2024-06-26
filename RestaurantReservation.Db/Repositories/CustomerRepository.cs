@@ -1,7 +1,10 @@
-﻿using RestaurantReservation.Db;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db;
 using RestaurantReservation.Db.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,6 +79,15 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext.Remove(customer);
             await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Customer {customerId} deleted successfully.");
+        }
+
+        public async Task<List<Customer>> CustomerWithPartySizeGreaterThan(int partySize)
+        {
+            var partySizeParam = new SqlParameter("@partysize", partySize);
+            List<Customer> customers = await _dbContext.Customers
+                .FromSqlRaw("sp_CustomersWithPartySizeGreaterThan @partysize", partySizeParam)
+                .ToListAsync();
+            return customers;
         }
     }
 }

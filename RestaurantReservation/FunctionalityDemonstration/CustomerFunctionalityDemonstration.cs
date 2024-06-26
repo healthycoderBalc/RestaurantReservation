@@ -1,7 +1,9 @@
-﻿using RestaurantReservation.Db.Repositories;
+﻿using RestaurantReservation.Db.Models;
+using RestaurantReservation.Db.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,6 +32,19 @@ namespace RestaurantReservation.FunctionalityDemonstration
 
                 await customerDemonstration.DeleteCustomer(createdCustomerId);
                 await customerDemonstration.ReadCustomer(createdCustomerId);
+
+                Console.WriteLine();
+                int partySize = 2;
+                Console.WriteLine($"Customers with Party Size Greater than: {partySize}");
+                List<Customer> customersPartySize = await customerDemonstration.CustomerWithPartySizeGreaterThan(partySize);
+                if (customersPartySize.Count > 0)
+                {
+                    foreach (Customer cps in customersPartySize)
+                    {
+                        Console.WriteLine($"Customer: {cps.CustomerId}. {cps.FirstName} {cps.LastName}, Email: {cps.Email}, Phone Number: {cps.PhoneNumber}");
+                    }
+                }
+                Console.WriteLine();
             }
         }
 
