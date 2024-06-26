@@ -1,4 +1,5 @@
-﻿using RestaurantReservation.Db;
+﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db;
 using RestaurantReservation.Db.Models;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestaurantReservation.Repositories
+namespace RestaurantReservation.Db.Repositories
 {
     public class RestaurantRepository : IDisposable
     {
@@ -78,6 +79,16 @@ namespace RestaurantReservation.Repositories
             _dbContext.Remove(restaurant);
             await _dbContext.SaveChangesAsync();
             Console.WriteLine($"Restaurant {restaurantId} deleted successfully.");
+        }
+
+        public async Task<decimal> GetRestaurantTotalRevenue(int restaurantId)
+        {
+            decimal restaurantTotalRevenue = _dbContext.Restaurants
+                .Where(r => r.RestaurantId == restaurantId)
+                .Select(r => RestaurantReservationDbContext.GetRestaurantTotalRevenue(restaurantId))
+                .FirstOrDefault();
+
+            return restaurantTotalRevenue;
         }
     }
 }

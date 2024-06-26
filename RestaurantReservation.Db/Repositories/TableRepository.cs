@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestaurantReservation.Repositories
+namespace RestaurantReservation.Db.Repositories
 {
     public class TableRepository : IDisposable
     {
@@ -32,7 +32,7 @@ namespace RestaurantReservation.Repositories
                 return 0;
             }
 
-            var newTable = new Db.Models.Table
+            var newTable = new Models.Table
             {
                 Restaurant = restaurant,
                 Capacity = capacity

@@ -1,4 +1,4 @@
-﻿using RestaurantReservation.Repositories;
+﻿using RestaurantReservation.Db.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +30,12 @@ namespace RestaurantReservation.FunctionalityDemonstration
 
                 await restaurantDemonstration.DeleteRestaurant(createdRestaurantId);
                 await restaurantDemonstration.ReadRestaurant(createdRestaurantId);
+
+                Console.WriteLine();
+                Console.WriteLine("Get Restaurant Total Revenue");
+                int restaurantId = 1;
+                decimal totalRevenue = await restaurantDemonstration.GetRestaurantTotalRevenue(restaurantId);
+                Console.WriteLine($"Total revenue for restaurant with ID {restaurantId} is ${totalRevenue}");
             }
         }
     }

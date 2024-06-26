@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestaurantReservation.Repositories
+namespace RestaurantReservation.Db.Repositories
 {
     public class CustomerRepository : IDisposable
     {

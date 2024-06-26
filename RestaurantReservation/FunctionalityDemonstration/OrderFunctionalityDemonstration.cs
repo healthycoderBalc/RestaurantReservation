@@ -1,5 +1,5 @@
 ﻿using RestaurantReservation.Db.Models;
-using RestaurantReservation.Repositories;
+using RestaurantReservation.Db.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

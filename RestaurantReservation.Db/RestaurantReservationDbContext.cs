@@ -59,13 +59,19 @@ namespace RestaurantReservation.Db
 
             modelBuilder.Entity<ReservationWithDetails>().HasNoKey().ToView("ReservationsWithDetails");
             modelBuilder.Entity<EmployeeWithRestaurantDetails>().HasNoKey().ToView("EmployeesWithRestaurantDetails");
+
+            var getRestaurantTotalRevenueMethodInfo = typeof(RestaurantReservationDbContext).GetMethod(nameof(GetRestaurantTotalRevenue), new[] { typeof(int) });
+
+            modelBuilder.HasDbFunction(getRestaurantTotalRevenueMethodInfo)
+                .HasName("GetRestaurantTotalRevenue")
+                .HasSchema("dbo");
         }
 
         private void SeedData(ModelBuilder modelBuilder)
         {
             var customerList = new Customer[]
             {
-                new Customer { CustomerId = 1, FirstName = "John", LastName = "Doe", 
+                new Customer { CustomerId = 1, FirstName = "John", LastName = "Doe",
                     Email = "john.doe@example.com", PhoneNumber = "1234567890" },
                 new Customer { CustomerId = 2, FirstName = "Jane", LastName = "Doe",
                     Email = "jane.doe@example.com", PhoneNumber = "1234567891" },
@@ -173,6 +179,12 @@ namespace RestaurantReservation.Db
             modelBuilder.Entity<Order>().HasData(orderList);
             modelBuilder.Entity<OrderItem>().HasData(orderItemList);
 
+        }
+
+        [DbFunction("GetRestaurantTotalRevenue", "dbo")]
+        public static decimal GetRestaurantTotalRevenue(int restaurantId)
+        {
+            throw new NotSupportedException();
         }
 
     }

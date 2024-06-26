@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace RestaurantReservation.Repositories
+namespace RestaurantReservation.Db.Repositories
 {
     public class EmployeeRepository : IDisposable
     {
