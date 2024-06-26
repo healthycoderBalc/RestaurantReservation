@@ -23,7 +23,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public async Task<int> CreateOrderItem(int orderId, int itemId, int quantity)
+        public async Task<int> CreateOrderItemAsync(int orderId, int itemId, int quantity)
         {
             var order = await _dbContext.Orders.FindAsync(orderId);
             if (order == null)
@@ -54,7 +54,7 @@ namespace RestaurantReservation.Db.Repositories
 
 
 
-        public async Task ReadOrderItem(int orderItemId)
+        public async Task ReadOrderItemAsync(int orderItemId)
         {
             var orderItem = await _dbContext.OrderItems.FindAsync(orderItemId);
 
@@ -66,7 +66,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"OrderItem found: ID {orderItem.OrderItemId} - Order: {orderItem.OrderId}, Menu item: {orderItem.MenuItem.Name}, Quantity: {orderItem.Quantity}");
         }
 
-        public async Task UpdateOrderItem(int orderItemId, int orderId, int itemId, int quantity)
+        public async Task UpdateOrderItemAsync(int orderItemId, int orderId, int itemId, int quantity)
         {
             var orderItem = await _dbContext.OrderItems.FindAsync(orderItemId);
             if (orderItem == null)
@@ -94,7 +94,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Order Item {orderItemId} updated successfully.");
         }
 
-        public async Task DeleteOrderItem(int orderItemId)
+        public async Task DeleteOrderItemAsync(int orderItemId)
         {
             var orderItem = await _dbContext.OrderItems.FindAsync(orderItemId);
             if (orderItem == null)

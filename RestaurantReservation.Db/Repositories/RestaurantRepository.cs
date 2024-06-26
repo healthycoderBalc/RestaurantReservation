@@ -23,7 +23,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public async Task<int> CreateRestaurant(string name, string address, string phoneNumber, string openingHours)
+        public async Task<int> CreateRestaurantAsync(string name, string address, string phoneNumber, string openingHours)
         {
             var newRestaurant = new Restaurant
             {
@@ -40,7 +40,7 @@ namespace RestaurantReservation.Db.Repositories
             return newRestaurant.RestaurantId;
         }
 
-        public async Task ReadRestaurant(int restaurantId)
+        public async Task ReadRestaurantAsync(int restaurantId)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
 
@@ -52,7 +52,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Restaurant found: ID {restaurant.RestaurantId} - {restaurant.Name}, Address: {restaurant.Address}, Opening Hours: {restaurant.OpeningHours}, Phone: {restaurant.PhoneNumber}");
         }
 
-        public async Task UpdateRestaurant(int restaurantId, string newAddress, string newPhoneNumber, string newOpeningHours)
+        public async Task UpdateRestaurantAsync(int restaurantId, string newAddress, string newPhoneNumber, string newOpeningHours)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
@@ -68,7 +68,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Restaurant {restaurantId} updated successfully.");
         }
 
-        public async Task DeleteRestaurant(int restaurantId)
+        public async Task DeleteRestaurantAsync(int restaurantId)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
@@ -81,7 +81,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Restaurant {restaurantId} deleted successfully.");
         }
 
-        public async Task<decimal> GetRestaurantTotalRevenue(int restaurantId)
+        public async Task<decimal> GetRestaurantTotalRevenueAsync(int restaurantId)
         {
             decimal restaurantTotalRevenue = _dbContext.Restaurants
                 .Where(r => r.RestaurantId == restaurantId)

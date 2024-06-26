@@ -10,7 +10,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class OrderFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public async Task Demonstrate()
+        public async Task DemonstrateAsync()
         {
             using (var orderDemonstration = new OrderRepository())
             {
@@ -19,22 +19,22 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 int employeeId = 1;
                 DateTime orderDate = DateTime.Now.AddDays(6);
                 decimal totalAmount = 48.3M;
-                int createdOrderId = await orderDemonstration.CreateOrder(reservationId, employeeId, orderDate, totalAmount);
-                await orderDemonstration.ReadOrder(createdOrderId);
+                int createdOrderId = await orderDemonstration.CreateOrderAsync(reservationId, employeeId, orderDate, totalAmount);
+                await orderDemonstration.ReadOrderAsync(createdOrderId);
 
                 int newReservationId = 1;
                 int newEmployeeId = 1;
                 DateTime newOrderDate = DateTime.Now.AddDays(8);
                 decimal newTotalAmount = 49.3M;
-                await orderDemonstration.UpdateOrder(createdOrderId, newReservationId, newEmployeeId, newOrderDate, newTotalAmount);
-                await orderDemonstration.ReadOrder(createdOrderId);
+                await orderDemonstration.UpdateOrderAsync(createdOrderId, newReservationId, newEmployeeId, newOrderDate, newTotalAmount);
+                await orderDemonstration.ReadOrderAsync(createdOrderId);
 
-                await orderDemonstration.DeleteOrder(createdOrderId);
-                await orderDemonstration.ReadOrder(createdOrderId);
+                await orderDemonstration.DeleteOrderAsync(createdOrderId);
+                await orderDemonstration.ReadOrderAsync(createdOrderId);
 
                 Console.WriteLine();
                 Console.WriteLine("List Order And Menu Items");
-                List<Order> orders = await orderDemonstration.ListOrderAndMenuItems(reservationId);
+                List<Order> orders = await orderDemonstration.ListOrderAndMenuItemsAsync(reservationId);
                 if (orders.Count > 0)
                 {
 
@@ -51,7 +51,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 Console.WriteLine();
 
                 Console.WriteLine("List Ordered Menu Items");
-                List<MenuItem> menuItems = await orderDemonstration.ListOrderedMenuItems(reservationId);
+                List<MenuItem> menuItems = await orderDemonstration.ListOrderedMenuItemsAsync(reservationId);
                 if (menuItems.Count > 0)
                 {
                     foreach (MenuItem menuItem in menuItems)
@@ -62,7 +62,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 Console.WriteLine();
 
                 Console.WriteLine("Calculate Average Order Amount");
-                decimal averageOrderAmount = await orderDemonstration.CalculateAverageOrderAmount(employeeId);
+                decimal averageOrderAmount = await orderDemonstration.CalculateAverageOrderAmountAsync(employeeId);
 
                 Console.WriteLine($"Employee ID: {employeeId}, Average Order Amount: ${averageOrderAmount}");
 

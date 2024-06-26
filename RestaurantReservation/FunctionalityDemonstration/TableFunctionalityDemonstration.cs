@@ -9,7 +9,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class TableFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public async Task Demonstrate()
+        public async Task DemonstrateAsync()
         {
             using (var tableDemonstration = new TableRepository())
             {
@@ -17,16 +17,16 @@ namespace RestaurantReservation.FunctionalityDemonstration
 
                 int restaurantId = 1;
                 int capacity = 10;
-                int createdTableId = await tableDemonstration.CreateTable(restaurantId, capacity);
-                await tableDemonstration.ReadTable(createdTableId);
+                int createdTableId = await tableDemonstration.CreateTableAsync(restaurantId, capacity);
+                await tableDemonstration.ReadTableAsync(createdTableId);
 
                 int newRestaurantId = 2;
                 int newCapacity = 6;
-                await tableDemonstration.UpdateTable(createdTableId, newRestaurantId, newCapacity);
-                await tableDemonstration.ReadTable(createdTableId);
+                await tableDemonstration.UpdateTableAsync(createdTableId, newRestaurantId, newCapacity);
+                await tableDemonstration.ReadTableAsync(createdTableId);
 
-                await tableDemonstration.DeleteTable(createdTableId);
-                await tableDemonstration.ReadTable(createdTableId);
+                await tableDemonstration.DeleteTableAsync(createdTableId);
+                await tableDemonstration.ReadTableAsync(createdTableId);
             }
         }
     }

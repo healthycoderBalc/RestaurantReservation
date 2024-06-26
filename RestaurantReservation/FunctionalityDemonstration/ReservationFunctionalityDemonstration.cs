@@ -10,7 +10,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class ReservationFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public async Task Demonstrate()
+        public async Task DemonstrateAsync()
         {
             using (var reservationDemonstration = new ReservationRepository())
             {
@@ -21,23 +21,23 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 int tableId = 4;
                 DateTime reservationDate = DateTime.Now.AddDays(6);
                 int partySize = 3;
-                int createdReservationId = await reservationDemonstration.CreateReservation(customerId, restaurantId, tableId, reservationDate, partySize);
-                await reservationDemonstration.ReadReservation(createdReservationId);
+                int createdReservationId = await reservationDemonstration.CreateReservationAsync(customerId, restaurantId, tableId, reservationDate, partySize);
+                await reservationDemonstration.ReadReservationAsync(createdReservationId);
 
                 int newCustomerId = 1;
                 int newRestaurantId = 1;
                 int newTableId = 2;
                 DateTime newReservationDate = DateTime.Now.AddDays(8);
                 int newPartySize = 8;
-                await reservationDemonstration.UpdateReservation(createdReservationId, newCustomerId, newRestaurantId, newTableId, newReservationDate, newPartySize);
-                await reservationDemonstration.ReadReservation(createdReservationId);
+                await reservationDemonstration.UpdateReservationAsync(createdReservationId, newCustomerId, newRestaurantId, newTableId, newReservationDate, newPartySize);
+                await reservationDemonstration.ReadReservationAsync(createdReservationId);
 
-                await reservationDemonstration.DeleteReservation(createdReservationId);
-                await reservationDemonstration.ReadReservation(createdReservationId);
+                await reservationDemonstration.DeleteReservationAsync(createdReservationId);
+                await reservationDemonstration.ReadReservationAsync(createdReservationId);
 
                 Console.WriteLine();
                 Console.WriteLine("Get reservation by customer");
-                List<Reservation> reservations = await reservationDemonstration.GetReservationsByCustomer(customerId);
+                List<Reservation> reservations = await reservationDemonstration.GetReservationsByCustomerAsync(customerId);
                 if (reservations.Count > 0)
                 {
                     foreach (Reservation reservation in reservations)
@@ -48,7 +48,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 Console.WriteLine();
 
                 Console.WriteLine("Get reservations with customer and restaurant information (from view)");
-                List<ReservationWithDetails> reservationsFromView = await reservationDemonstration.GetReservationsWithCustomerAndRestaurantInformationFromView();
+                List<ReservationWithDetails> reservationsFromView = await reservationDemonstration.GetReservationsWithCustomerAndRestaurantInformationFromViewAsync();
                 if (reservationsFromView.Count > 0)
                 {
                     foreach (ReservationWithDetails reservation in reservationsFromView)

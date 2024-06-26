@@ -23,7 +23,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public async Task<int> CreateTable(int restaurantId, int capacity)
+        public async Task<int> CreateTableAsync(int restaurantId, int capacity)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
@@ -45,7 +45,7 @@ namespace RestaurantReservation.Db.Repositories
             return newTable.TableId;
         }
 
-        public async Task ReadTable(int tableId)
+        public async Task ReadTableAsync(int tableId)
         {
             var table = await _dbContext.Tables.FindAsync(tableId);
 
@@ -57,7 +57,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Table found: ID {table.TableId} - In Restaurant: {table.Restaurant.Name}, Capacity: {table.Capacity}");
         }
 
-        public async Task UpdateTable(int tableId, int restaurantId, int capacity)
+        public async Task UpdateTableAsync(int tableId, int restaurantId, int capacity)
         {
             var table = await _dbContext.Tables.FindAsync(tableId);
             var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
@@ -78,7 +78,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Table {tableId} updated successfully.");
         }
 
-        public async Task DeleteTable(int tableId)
+        public async Task DeleteTableAsync(int tableId)
         {
             var table = await _dbContext.Tables.FindAsync(tableId);
             if (table == null)

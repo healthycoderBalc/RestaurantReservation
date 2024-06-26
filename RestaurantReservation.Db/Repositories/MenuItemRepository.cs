@@ -23,7 +23,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public async Task<int> CreateMenuItem(int restaurantId, string name, string description, decimal price)
+        public async Task<int> CreateMenuItemAsync(int restaurantId, string name, string description, decimal price)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
@@ -48,7 +48,7 @@ namespace RestaurantReservation.Db.Repositories
         }
 
 
-        public async Task ReadMenuItem(int menuItemId)
+        public async Task ReadMenuItemAsync(int menuItemId)
         {
             var menuItem = await _dbContext.MenuItems.FindAsync(menuItemId);
 
@@ -60,7 +60,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"MenuItem found: ID {menuItem.MenuItemId} - In Restaurant: {menuItem.Restaurant.Name}, Name: {menuItem.Name}, Description: {menuItem.Description}, ${menuItem.Price}");
         }
 
-        public async Task UpdateMenuItem(int menuItemId, int restaurantId, string name, string description, decimal price)
+        public async Task UpdateMenuItemAsync(int menuItemId, int restaurantId, string name, string description, decimal price)
         {
             var menuItem = await _dbContext.MenuItems.FindAsync(menuItemId);
             var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
@@ -83,7 +83,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"MenuItem {menuItemId} updated successfully.");
         }
 
-        public async Task DeleteMenuItem(int menuItemId)
+        public async Task DeleteMenuItemAsync(int menuItemId)
         {
             var menuItem = await _dbContext.MenuItems.FindAsync(menuItemId);
             if (menuItem == null)

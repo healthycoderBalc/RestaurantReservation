@@ -24,7 +24,7 @@ namespace RestaurantReservation.Db.Repositories
             GC.SuppressFinalize(this);
         }
 
-        public async Task<int> CreateEmployee(int restaurantId, string firstName, string lastName, string position)
+        public async Task<int> CreateEmployeeAsync(int restaurantId, string firstName, string lastName, string position)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
@@ -47,7 +47,7 @@ namespace RestaurantReservation.Db.Repositories
             return newEmployee.EmployeeId;
         }
 
-        public async Task ReadEmployee(int employeeId)
+        public async Task ReadEmployeeAsync(int employeeId)
         {
             var employee = await _dbContext.Employees.FindAsync(employeeId);
 
@@ -60,7 +60,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Employee found: ID {employee.EmployeeId} - {employee.FirstName} {employee.LastName}, Position: {employee.Position}");
         }
 
-        public async Task UpdateEmployee(int employeeId, int restaurantId, string firstName, string lastName, string position)
+        public async Task UpdateEmployeeAsync(int employeeId, int restaurantId, string firstName, string lastName, string position)
         {
             var employee = await _dbContext.Employees.FindAsync(employeeId);
             var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
@@ -84,7 +84,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Employee {employeeId} updated successfully.");
         }
 
-        public async Task DeleteEmployee(int employeeId)
+        public async Task DeleteEmployeeAsync(int employeeId)
         {
             var employee = await _dbContext.Employees.FindAsync(employeeId);
             if (employee == null)
@@ -98,7 +98,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Employee {employeeId} deleted successfully.");
         }
 
-        public async Task<List<Employee>> ListManagers()
+        public async Task<List<Employee>> ListManagersAsync()
         {
             var managerPosition = "Manager";
             List<Employee> managers = await _dbContext.Employees
@@ -108,7 +108,7 @@ namespace RestaurantReservation.Db.Repositories
             return managers;
         }
 
-        public async Task<List<EmployeeWithRestaurantDetails>> GetEmployeesWithRestaurantDetailsFromView()
+        public async Task<List<EmployeeWithRestaurantDetails>> GetEmployeesWithRestaurantDetailsFromViewAsync()
         {
             List<EmployeeWithRestaurantDetails> employees = await _dbContext.EmployeesWithRestaurantDetails
                 .ToListAsync();

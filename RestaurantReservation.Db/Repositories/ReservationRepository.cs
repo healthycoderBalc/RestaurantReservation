@@ -24,7 +24,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public async Task<int> CreateReservation(int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
+        public async Task<int> CreateReservationAsync(int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
         {
             var customer = await _dbContext.Customers.FindAsync(customerId);
             if (customer == null)
@@ -63,7 +63,7 @@ namespace RestaurantReservation.Db.Repositories
         }
 
 
-        public async Task ReadReservation(int reservationId)
+        public async Task ReadReservationAsync(int reservationId)
         {
             var reservation = await _dbContext.Reservations.FindAsync(reservationId);
 
@@ -75,7 +75,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Reservation found: ID {reservation.ReservationId} - Customer: {reservation.Customer.FirstName} {reservation.Customer.FirstName}, Restaurant: {reservation.Restaurant.Name}, Table: {reservation.Table.TableId}, Date: {reservation.ReservationDate}, Size: {reservation.PartySize}");
         }
 
-        public async Task UpdateReservation(int reservationId, int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
+        public async Task UpdateReservationAsync(int reservationId, int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
         {
             var reservation = await _dbContext.Reservations.FindAsync(reservationId);
             if (reservation == null)
@@ -113,7 +113,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Reservation {reservationId} updated successfully.");
         }
 
-        public async Task DeleteReservation(int reservationId)
+        public async Task DeleteReservationAsync(int reservationId)
         {
             var reservation = await _dbContext.Reservations.FindAsync(reservationId);
             if (reservation == null)
@@ -126,7 +126,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Reservation {reservationId} deleted successfully.");
         }
 
-        public async Task<List<Reservation>> GetReservationsByCustomer(int customerId)
+        public async Task<List<Reservation>> GetReservationsByCustomerAsync(int customerId)
         {
             List<Reservation> reservations = await _dbContext.Reservations
                 .Where(r => r.CustomerId == customerId)
@@ -137,7 +137,7 @@ namespace RestaurantReservation.Db.Repositories
             return reservations;
         }
 
-        public async Task<List<ReservationWithDetails>> GetReservationsWithCustomerAndRestaurantInformationFromView()
+        public async Task<List<ReservationWithDetails>> GetReservationsWithCustomerAndRestaurantInformationFromViewAsync()
         {
             List<ReservationWithDetails> reservations = await _dbContext.ReservationsWithDetails
                 .ToListAsync();

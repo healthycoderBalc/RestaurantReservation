@@ -9,7 +9,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class OrderItemFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public async Task Demonstrate()
+        public async Task DemonstrateAsync()
         {
             using (var orderItemDemonstration = new OrderItemRepository())
             {
@@ -18,17 +18,17 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 int orderId = 1;
                 int itemId = 1;
                 int quantity = 2;
-                int createdOrderItemId = await orderItemDemonstration.CreateOrderItem(orderId, itemId, quantity);
-                await orderItemDemonstration.ReadOrderItem(createdOrderItemId);
+                int createdOrderItemId = await orderItemDemonstration.CreateOrderItemAsync(orderId, itemId, quantity);
+                await orderItemDemonstration.ReadOrderItemAsync(createdOrderItemId);
 
                 int newOrderId = 1;
                 int newItemId = 1;
                 int newQuantity = 3;
-                await orderItemDemonstration.UpdateOrderItem(createdOrderItemId, newOrderId, newItemId, newQuantity);
-                await orderItemDemonstration.ReadOrderItem(createdOrderItemId);
+                await orderItemDemonstration.UpdateOrderItemAsync(createdOrderItemId, newOrderId, newItemId, newQuantity);
+                await orderItemDemonstration.ReadOrderItemAsync(createdOrderItemId);
 
-                await orderItemDemonstration.DeleteOrderItem(createdOrderItemId);
-                await orderItemDemonstration.ReadOrderItem(createdOrderItemId);
+                await orderItemDemonstration.DeleteOrderItemAsync(createdOrderItemId);
+                await orderItemDemonstration.ReadOrderItemAsync(createdOrderItemId);
             }
         }
     }

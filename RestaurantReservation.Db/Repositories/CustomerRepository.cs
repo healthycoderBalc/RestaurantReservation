@@ -25,7 +25,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public async Task<int> CreateCustomer(string firstName, string lastName, string email, string phoneNumber)
+        public async Task<int> CreateCustomerAsync(string firstName, string lastName, string email, string phoneNumber)
         {
             var newCustomer = new Customer
             {
@@ -41,7 +41,7 @@ namespace RestaurantReservation.Db.Repositories
             return newCustomer.CustomerId;
         }
 
-        public async Task ReadCustomer(int customerId)
+        public async Task ReadCustomerAsync(int customerId)
         {
             var customer = await _dbContext.Customers.FindAsync(customerId);
 
@@ -53,7 +53,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Customer found: ID {customer.CustomerId} - {customer.FirstName} {customer.LastName}, Email: {customer.Email}, Phone: {customer.PhoneNumber}");
         }
 
-        public async Task UpdateCustomer(int customerId, string newEmail, string newPhoneNumber)
+        public async Task UpdateCustomerAsync(int customerId, string newEmail, string newPhoneNumber)
         {
             var customer = await _dbContext.Customers.FindAsync(customerId);
             if (customer == null)
@@ -68,7 +68,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Customer {customerId} updated successfully.");
         }
 
-        public async Task DeleteCustomer(int customerId)
+        public async Task DeleteCustomerAsync(int customerId)
         {
             var customer = await _dbContext.Customers.FindAsync(customerId);
             if (customer == null)
@@ -81,7 +81,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Customer {customerId} deleted successfully.");
         }
 
-        public async Task<List<Customer>> CustomerWithPartySizeGreaterThan(int partySize)
+        public async Task<List<Customer>> CustomerWithPartySizeGreaterThanAsync(int partySize)
         {
             var partySizeParam = new SqlParameter("@partysize", partySize);
             List<Customer> customers = await _dbContext.Customers

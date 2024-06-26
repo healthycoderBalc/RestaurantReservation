@@ -24,7 +24,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext = new RestaurantReservationDbContext();
         }
 
-        public async Task<int> CreateOrder(int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
+        public async Task<int> CreateOrderAsync(int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
         {
             var reservation = await _dbContext.Reservations.FindAsync(reservationId);
             if (reservation == null)
@@ -55,7 +55,7 @@ namespace RestaurantReservation.Db.Repositories
             return newOrder.OrderId;
         }
 
-        public async Task ReadOrder(int orderId)
+        public async Task ReadOrderAsync(int orderId)
         {
             var order = await _dbContext.Orders.FindAsync(orderId);
 
@@ -67,7 +67,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Order found: ID {order.OrderId} - Reservation Nº: {order.ReservationId}, Employee: {order.Employee.FirstName} {order.Employee.LastName}, Date: {order.OrderDate}, Total Amount: {order.TotalAmount}");
         }
 
-        public async Task UpdateOrder(int orderId, int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
+        public async Task UpdateOrderAsync(int orderId, int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
         {
             var order = await _dbContext.Orders.FindAsync(orderId);
             if (order == null)
@@ -98,7 +98,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Order {orderId} updated successfully.");
         }
 
-        public async Task DeleteOrder(int orderId)
+        public async Task DeleteOrderAsync(int orderId)
         {
             var order = await _dbContext.Orders.FindAsync(orderId);
             if (order == null)
@@ -111,7 +111,7 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Order {orderId} deleted successfully.");
         }
 
-        public async Task<List<Order>> ListOrderAndMenuItems(int reservationId)
+        public async Task<List<Order>> ListOrderAndMenuItemsAsync(int reservationId)
         {
             List<Order> orders = await _dbContext.Orders
                 .Where(o => o.ReservationId == reservationId)
@@ -122,7 +122,7 @@ namespace RestaurantReservation.Db.Repositories
             return orders;
         }
 
-        public async Task<List<MenuItem>> ListOrderedMenuItems(int reservationId)
+        public async Task<List<MenuItem>> ListOrderedMenuItemsAsync(int reservationId)
         {
             List<MenuItem> menuItems= await _dbContext.OrderItems
                 .Where(oi => oi.Order.ReservationId == reservationId)
@@ -132,7 +132,7 @@ namespace RestaurantReservation.Db.Repositories
             return menuItems;
         }
 
-        public async Task<decimal> CalculateAverageOrderAmount(int employeeId)
+        public async Task<decimal> CalculateAverageOrderAmountAsync(int employeeId)
         {
             List<Order> employeeOrders = await _dbContext.Orders
                 .Where(o => o.EmployeeId == employeeId)

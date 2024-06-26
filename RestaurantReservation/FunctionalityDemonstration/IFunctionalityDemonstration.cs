@@ -8,6 +8,6 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public interface IFunctionalityDemonstration
     {
-        Task Demonstrate();
+        Task DemonstrateAsync();
     }
 }

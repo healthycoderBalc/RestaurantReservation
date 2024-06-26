@@ -10,7 +10,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
 {
     public class EmployeeFunctionalityDemonstration : IFunctionalityDemonstration
     {
-        public async Task Demonstrate()
+        public async Task DemonstrateAsync()
         {
             using (var employeeDemonstration = new EmployeeRepository())
             {
@@ -20,20 +20,20 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 string firstName = "Mary";
                 string lastName = "Jane";
                 string position = "Manager";
-                var newEmployeeId = await employeeDemonstration.CreateEmployee(restaurantId, firstName, lastName, position);
-                await employeeDemonstration.ReadEmployee(newEmployeeId);
+                var newEmployeeId = await employeeDemonstration.CreateEmployeeAsync(restaurantId, firstName, lastName, position);
+                await employeeDemonstration.ReadEmployeeAsync(newEmployeeId);
 
                 int newRestaurantId = 1;
                 string newFirstName = "Michelle";
                 string newLastName = "Jones";
                 string newPosition = "Supervisor";
-                await employeeDemonstration.UpdateEmployee(newEmployeeId, newRestaurantId, newFirstName, newLastName, newPosition);
-                await employeeDemonstration.ReadEmployee(newEmployeeId);
+                await employeeDemonstration.UpdateEmployeeAsync(newEmployeeId, newRestaurantId, newFirstName, newLastName, newPosition);
+                await employeeDemonstration.ReadEmployeeAsync(newEmployeeId);
 
-                await employeeDemonstration.DeleteEmployee(newEmployeeId);
-                await employeeDemonstration.ReadEmployee(newEmployeeId);
+                await employeeDemonstration.DeleteEmployeeAsync(newEmployeeId);
+                await employeeDemonstration.ReadEmployeeAsync(newEmployeeId);
 
-                List<Employee> managers = await employeeDemonstration.ListManagers();
+                List<Employee> managers = await employeeDemonstration.ListManagersAsync();
                 Console.WriteLine();
                 Console.WriteLine("Managers: ");
                 if (managers.Count > 0)
@@ -45,7 +45,7 @@ namespace RestaurantReservation.FunctionalityDemonstration
                 }
                 Console.WriteLine();
                 Console.WriteLine("Get employees with restaurant details (from view)");
-                List<EmployeeWithRestaurantDetails> employeesFromView = await employeeDemonstration.GetEmployeesWithRestaurantDetailsFromView();
+                List<EmployeeWithRestaurantDetails> employeesFromView = await employeeDemonstration.GetEmployeesWithRestaurantDetailsFromViewAsync();
                 if (employeesFromView.Count > 0)
                 {
                     foreach (EmployeeWithRestaurantDetails employee in employeesFromView)
