@@ -1,10 +1,13 @@
-﻿namespace RestaurantReservation
+﻿using RestaurantReservation.FunctionalityDemonstration;
+
+namespace RestaurantReservation
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            var demonstrationManager = new DemonstrationManager();
+            demonstrationManager.RunAllDemonstrations();
         }
     }
 }
