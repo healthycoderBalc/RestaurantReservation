@@ -87,10 +87,10 @@ namespace RestaurantReservation.Db.Repositories
 
         public async Task<decimal> GetRestaurantTotalRevenueAsync(int restaurantId)
         {
-            decimal restaurantTotalRevenue = _dbContext.Restaurants
+            decimal restaurantTotalRevenue = await _dbContext.Restaurants
                 .Where(r => r.RestaurantId == restaurantId)
                 .Select(r => RestaurantReservationDbContext.GetRestaurantTotalRevenue(restaurantId))
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             return restaurantTotalRevenue;
         }

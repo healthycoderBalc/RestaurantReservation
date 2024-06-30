@@ -108,39 +108,7 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext.Orders.Remove(order);
         }
 
-        public async Task<List<Order>> ListOrderAndMenuItemsAsync(int reservationId)
-        {
-            List<Order> orders = await _dbContext.Orders
-                .Where(o => o.ReservationId == reservationId)
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.MenuItem)
-                .ToListAsync();
-
-            return orders;
-        }
-
-        public async Task<List<MenuItem>> ListOrderedMenuItemsAsync(int reservationId)
-        {
-            List<MenuItem> menuItems = await _dbContext.OrderItems
-                .Where(oi => oi.Order.ReservationId == reservationId)
-                .Select(oi => oi.MenuItem)
-                .ToListAsync();
-
-            return menuItems;
-        }
-
-        public async Task<decimal> CalculateAverageOrderAmountAsync(int employeeId)
-        {
-            List<Order> employeeOrders = await _dbContext.Orders
-                .Where(o => o.EmployeeId == employeeId)
-                .ToListAsync();
-
-            if (employeeOrders.Count == 0) return 0;
-            decimal average = employeeOrders
-                .Average(o => o.TotalAmount);
-
-            return average;
-        }
+      
 
         public async Task<bool> ReservationAndEmployeeExistsAsync(int reservationId, int employeeId)
         {

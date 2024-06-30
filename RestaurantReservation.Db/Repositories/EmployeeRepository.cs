@@ -106,9 +106,23 @@ namespace RestaurantReservation.Db.Repositories
             var managerPosition = "Manager";
             List<Employee> managers = await _dbContext.Employees
                 .Where(e => e.Position == managerPosition)
+                .Include(e => e.Restaurant)
                 .ToListAsync();
 
             return managers;
+        }
+
+        public async Task<decimal> CalculateAverageOrderAmountAsync(int employeeId)
+        {
+            List<Order> employeeOrders = await _dbContext.Orders
+                .Where(o => o.EmployeeId == employeeId)
+                .ToListAsync();
+
+            if (employeeOrders.Count == 0) return 0;
+            decimal average = employeeOrders
+                .Average(o => o.TotalAmount);
+
+            return average;
         }
 
         public async Task<List<EmployeeWithRestaurantDetails>> GetEmployeesWithRestaurantDetailsFromViewAsync()

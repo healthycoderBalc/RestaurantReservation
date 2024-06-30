@@ -41,7 +41,7 @@ namespace RestaurantReservation.Db.Repositories
                     .Include(r => r.Customer)
                     .Include(r => r.Restaurant)
                     .Include(r => r.Table)
-                    .Include(c => c.Orders)
+                    .Include(r => r.Orders)
                     .ThenInclude(o => o.Employee)
                     .Where(c => c.ReservationId == reservationId)
                     .FirstOrDefaultAsync();
@@ -126,11 +126,33 @@ namespace RestaurantReservation.Db.Repositories
         {
             List<Reservation> reservations = await _dbContext.Reservations
                 .Where(r => r.CustomerId == customerId)
+                .Include(r => r.Customer)
                 .Include(r => r.Table)
                 .Include(r => r.Restaurant)
                 .ToListAsync();
 
             return reservations;
+        }
+
+        public async Task<List<Order>> ListOrderAndMenuItemsAsync(int reservationId)
+        {
+            List<Order> orders = await _dbContext.Orders
+                .Where(o => o.ReservationId == reservationId)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.MenuItem)
+                .ToListAsync();
+
+            return orders;
+        }
+
+        public async Task<List<MenuItem>> ListOrderedMenuItemsAsync(int reservationId)
+        {
+            List<MenuItem> menuItems = await _dbContext.OrderItems
+                .Where(oi => oi.Order.ReservationId == reservationId)
+                .Select(oi => oi.MenuItem)
+                .ToListAsync();
+
+            return menuItems;
         }
 
         public async Task<List<ReservationWithDetails>> GetReservationsWithCustomerAndRestaurantInformationFromViewAsync()
@@ -150,6 +172,28 @@ namespace RestaurantReservation.Db.Repositories
                 .AnyAsync(e => e.TableId == tableId);
             return customer && restaurant && table;
         }
+
+        public async Task<bool> CustomerExistAsync(int customerId)
+        {
+            var customer = await _dbContext.Customers
+                .AnyAsync(r => r.CustomerId == customerId);
+            return customer;
+        }
+
+        public async Task<bool> RestaurantExistAsync(int restaurantId)
+        {
+            var restaurant = await _dbContext.Restaurants
+                .AnyAsync(r => r.RestaurantId == restaurantId);
+            return restaurant;
+        }
+
+        public async Task<bool> TableExistAsync(int tableId)
+        {
+            var table = await _dbContext.Tables
+                .AnyAsync(r => r.TableId == tableId);
+            return table;
+        }
+
 
         public async Task<bool> SaveChangesAsync()
         {
