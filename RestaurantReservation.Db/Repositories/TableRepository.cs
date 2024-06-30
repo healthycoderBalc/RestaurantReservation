@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using RestaurantReservation.Db;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RestaurantReservation.Db.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantReservation.Db.Repositories
 {
-    public class TableRepository : IDisposable
+    public class TableRepository : IDisposable, ITableRepository
     {
         private readonly RestaurantReservationDbContext _dbContext;
 
@@ -18,31 +18,43 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext.Dispose();
             GC.SuppressFinalize(this);
         }
-        public TableRepository()
+        public TableRepository(RestaurantReservationDbContext dbContext)
         {
-            _dbContext = new RestaurantReservationDbContext();
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<int> CreateTableAsync(int restaurantId, int capacity)
+        public async Task<List<Models.Table>> GetTablesAsync()
+        {
+            return await _dbContext.Tables
+                .Include(t => t.Restaurant)
+                .ToListAsync();
+        }
+
+        public async Task<Models.Table?> GetTableAsync(int tableId, bool includeLists)
+        {
+            if (includeLists)
+            {
+                return await _dbContext.Tables
+                    .Include(t => t.Reservations)
+                    .Include(t => t.Restaurant)
+                    .Where(t => t.TableId == tableId)
+                    .FirstOrDefaultAsync();
+            }
+            return await _dbContext.Tables
+                    .Include(t => t.Restaurant)
+                    .Where(t => t.TableId == tableId)
+                    .FirstOrDefaultAsync();
+        }
+
+
+        public async Task CreateTableAsync(int restaurantId, Db.Models.Table table)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (restaurant == null)
+            if (restaurant != null)
             {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return 0;
+                _dbContext.Tables.Add(table);
+
             }
-
-            var newTable = new Models.Table
-            {
-                Restaurant = restaurant,
-                Capacity = capacity
-            };
-
-            _dbContext.Tables.Add(newTable);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Table created with ID: {newTable.TableId}");
-
-            return newTable.TableId;
         }
 
         public async Task ReadTableAsync(int tableId)
@@ -78,17 +90,21 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Table {tableId} updated successfully.");
         }
 
-        public async Task DeleteTableAsync(int tableId)
+        public void DeleteTableAsync(Db.Models.Table table)
         {
-            var table = await _dbContext.Tables.FindAsync(tableId);
-            if (table == null)
-            {
-                Console.WriteLine($"Table with ID {tableId} not found.");
-                return;
-            }
-            _dbContext.Remove(table);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Table {tableId} deleted successfully.");
+            _dbContext.Tables.Remove(table);
+        }
+
+        public async Task<bool> RestaurantExistsAsync(int restaurantId)
+        {
+            var restaurant = await _dbContext.Restaurants
+                .AnyAsync(r => r.RestaurantId == restaurantId);
+            return restaurant;
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
         }
     }
 }

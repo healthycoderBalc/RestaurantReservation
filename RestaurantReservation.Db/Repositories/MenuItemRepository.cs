@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RestaurantReservation.Db;
 using RestaurantReservation.Db.Models;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantReservation.Db.Repositories
 {
-    public class MenuItemRepository : IDisposable
+    public class MenuItemRepository : IDisposable, IMenuItemRepository
     {
         private readonly RestaurantReservationDbContext _dbContext;
 
@@ -18,35 +19,42 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext.Dispose();
             GC.SuppressFinalize(this);
         }
-        public MenuItemRepository()
+        public MenuItemRepository(RestaurantReservationDbContext dbContext)
         {
-            _dbContext = new RestaurantReservationDbContext();
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<int> CreateMenuItemAsync(int restaurantId, string name, string description, decimal price)
+        public async Task<List<MenuItem>> GetMenuItemsAsync()
+        {
+            return await _dbContext.MenuItems
+                .Include(mi => mi.Restaurant)
+                .ToListAsync();
+        }
+
+        public async Task<MenuItem?> GetMenuItemAsync(int menuItemId, bool includeLists)
+        {
+            if (includeLists)
+            {
+                return await _dbContext.MenuItems
+                    .Include(mi => mi.Restaurant)
+                    .Include(mi => mi.OrderItems)
+                    .Where(mi => mi.MenuItemId == menuItemId)
+                    .FirstOrDefaultAsync();
+            }
+            return await _dbContext.MenuItems
+                .Include(mi => mi.Restaurant)
+                .Where(mi => mi.MenuItemId == menuItemId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task CreateMenuItemAsync(int restaurantId, MenuItem menuItem)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (restaurant == null)
+            if (restaurant != null)
             {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return 0;
+                _dbContext.MenuItems.Add(menuItem);
             }
-
-            var newMenuItem = new MenuItem
-            {
-                Restaurant = restaurant,
-                Name = name,
-                Description = description,
-                Price = price
-            };
-
-            _dbContext.MenuItems.Add(newMenuItem);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Menu Item created with ID: {newMenuItem.MenuItemId}");
-
-            return newMenuItem.MenuItemId;
         }
-
 
         public async Task ReadMenuItemAsync(int menuItemId)
         {
@@ -83,17 +91,19 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"MenuItem {menuItemId} updated successfully.");
         }
 
-        public async Task DeleteMenuItemAsync(int menuItemId)
+        public void DeleteMenuItemAsync(MenuItem menuItem)
         {
-            var menuItem = await _dbContext.MenuItems.FindAsync(menuItemId);
-            if (menuItem == null)
-            {
-                Console.WriteLine($"MenuItem with ID {menuItemId} not found.");
-                return;
-            }
-            _dbContext.Remove(menuItem);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"MenuItem {menuItemId} deleted successfully.");
+            _dbContext.MenuItems.Remove(menuItem);
+        }
+
+        public async Task<bool> RestaurantExistsAsync(int restaurantId)
+        {
+            return await _dbContext.Restaurants.AnyAsync(r => r.RestaurantId == restaurantId);
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
         }
     }
 }

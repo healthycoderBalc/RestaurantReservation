@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantReservation.Db.Repositories
 {
-    public class RestaurantRepository : IDisposable
+    public class RestaurantRepository : IDisposable, IRestaurantRepository
     {
         private readonly RestaurantReservationDbContext _dbContext;
 
@@ -18,26 +18,38 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext.Dispose();
             GC.SuppressFinalize(this);
         }
-        public RestaurantRepository()
+        public RestaurantRepository(RestaurantReservationDbContext dbContext)
         {
-            _dbContext = new RestaurantReservationDbContext();
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<int> CreateRestaurantAsync(string name, string address, string phoneNumber, string openingHours)
+        public async Task<List<Restaurant>> GetRestaurantsAsync()
         {
-            var newRestaurant = new Restaurant
+            return await _dbContext.Restaurants.ToListAsync();
+        }
+
+        public async Task<Restaurant?> GetRestaurantAsync(int restaurantId, bool includeLists)
+        {
+            if (includeLists)
             {
-                Name = name,
-                Address = address,
-                PhoneNumber = phoneNumber,
-                OpeningHours = openingHours
-            };
+                return await _dbContext.Restaurants
+                    .Include(r => r.Tables)
+                    .Include(r => r.Employees)
+                    .Include(r => r.MenuItems)
+                    .Include(r => r.Reservations)
+                    .Where(r => r.RestaurantId == restaurantId)
+                    .FirstOrDefaultAsync();
+            }
+            return await _dbContext.Restaurants
+                .Where(r => r.RestaurantId == restaurantId)
+                .FirstOrDefaultAsync();
+        }
 
-            _dbContext.Restaurants.Add(newRestaurant);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Restaurant created with ID: {newRestaurant.RestaurantId}");
 
-            return newRestaurant.RestaurantId;
+        public void CreateRestaurantAsync(Restaurant restaurant)
+        {
+            _dbContext.Restaurants.Add(restaurant);
+
         }
 
         public async Task ReadRestaurantAsync(int restaurantId)
@@ -68,17 +80,9 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Restaurant {restaurantId} updated successfully.");
         }
 
-        public async Task DeleteRestaurantAsync(int restaurantId)
+        public void DeleteRestaurantAsync(Restaurant restaurant)
         {
-            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (restaurant == null)
-            {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return;
-            }
-            _dbContext.Remove(restaurant);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Restaurant {restaurantId} deleted successfully.");
+            _dbContext.Restaurants.Remove(restaurant);
         }
 
         public async Task<decimal> GetRestaurantTotalRevenueAsync(int restaurantId)
@@ -89,6 +93,11 @@ namespace RestaurantReservation.Db.Repositories
                 .FirstOrDefault();
 
             return restaurantTotalRevenue;
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
         }
     }
 }

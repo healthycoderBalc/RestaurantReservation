@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace RestaurantReservation.Db.Repositories
 {
-    public class EmployeeRepository : IDisposable
+    public class EmployeeRepository : IDisposable, IEmployeeRepository
     {
         private readonly RestaurantReservationDbContext _dbContext;
 
-        public EmployeeRepository()
+        public EmployeeRepository(RestaurantReservationDbContext dbContext)
         {
-            _dbContext = new RestaurantReservationDbContext();
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public void Dispose()
@@ -24,27 +24,37 @@ namespace RestaurantReservation.Db.Repositories
             GC.SuppressFinalize(this);
         }
 
-        public async Task<int> CreateEmployeeAsync(int restaurantId, string firstName, string lastName, string position)
+        public async Task<List<Employee>> GetEmployeesAsync()
+        {
+            return await _dbContext.Employees
+                .Include(e => e.Restaurant)
+                .ToListAsync();
+        }
+
+        public async Task<Employee?> GetEmployeeAsync(int employeeId, bool includeLists)
+        {
+            if (includeLists)
+            {
+                return await _dbContext.Employees
+                    .Include(e => e.Restaurant)
+                    .Include(e => e.Orders)
+                    .Where(e => e.EmployeeId == employeeId)
+                    .FirstOrDefaultAsync();
+            }
+            return await _dbContext.Employees
+                    .Include(e => e.Restaurant)
+                    .Where(e => e.EmployeeId == employeeId)
+                    .FirstOrDefaultAsync();
+        }
+
+
+        public async Task CreateEmployeeAsync(int restaurantId, Employee employee)
         {
             var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (restaurant == null)
+            if (restaurant != null)
             {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return 0;
+                restaurant.Employees.Add(employee);
             }
-
-            var newEmployee = new Employee
-            {
-                Restaurant = restaurant,
-                FirstName = firstName,
-                LastName = lastName,
-                Position = position
-            };
-
-            _dbContext.Employees.Add(newEmployee);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Employee created with ID: {newEmployee.EmployeeId}");
-            return newEmployee.EmployeeId;
         }
 
         public async Task ReadEmployeeAsync(int employeeId)
@@ -84,18 +94,11 @@ namespace RestaurantReservation.Db.Repositories
             Console.WriteLine($"Employee {employeeId} updated successfully.");
         }
 
-        public async Task DeleteEmployeeAsync(int employeeId)
+        public void DeleteEmployeeAsync(Employee employee)
         {
-            var employee = await _dbContext.Employees.FindAsync(employeeId);
-            if (employee == null)
-            {
-                Console.WriteLine($"Employee with ID {employeeId} not found.");
-                return;
-            }
 
             _dbContext.Employees.Remove(employee);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Employee {employeeId} deleted successfully.");
+
         }
 
         public async Task<List<Employee>> ListManagersAsync()
@@ -113,6 +116,17 @@ namespace RestaurantReservation.Db.Repositories
             List<EmployeeWithRestaurantDetails> employees = await _dbContext.EmployeesWithRestaurantDetails
                 .ToListAsync();
             return employees;
+        }
+
+
+        public async Task<bool> RestaurantExistsAsync(int restaurantId)
+        {
+            return await _dbContext.Restaurants.AnyAsync(r => r.RestaurantId == restaurantId);
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
         }
 
     }
