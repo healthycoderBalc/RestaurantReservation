@@ -132,6 +132,16 @@ namespace RestaurantReservation.Db.Repositories
             return employees;
         }
 
+        public async Task<Employee?> ValidateUserCredentials(string? firstName, string? lastName, int id)
+        {
+            // assuming password is employeeId and username is combination of firstName and lastName
+            var user = await _dbContext.Employees
+                .Where(e => e.FirstName == firstName && e.LastName == lastName && e.EmployeeId == id)
+                .FirstOrDefaultAsync();
+
+            return user;
+        }
+
 
         public async Task<bool> RestaurantExistsAsync(int restaurantId)
         {

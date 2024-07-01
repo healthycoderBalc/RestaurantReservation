@@ -12,6 +12,8 @@ namespace RestaurantReservation.Db.Repositories
         Task<List<Employee>> ListManagersAsync();
         Task<decimal> CalculateAverageOrderAmountAsync(int employeeId);
         Task<List<EmployeeWithRestaurantDetails>> GetEmployeesWithRestaurantDetailsFromViewAsync();
+
+        Task<Employee?> ValidateUserCredentials(string? firstName, string? lastName, int id);
         Task<bool> RestaurantExistsAsync(int restaurantId);
         Task<bool> SaveChangesAsync();
 
