@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantReservation.Db.Repositories
 {
-    public class CustomerRepository : IDisposable
+    public class CustomerRepository : IDisposable, ICustomerRepository
     {
         private readonly RestaurantReservationDbContext _dbContext;
 
@@ -20,65 +20,41 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext.Dispose();
             GC.SuppressFinalize(this);
         }
-        public CustomerRepository()
+        public CustomerRepository(RestaurantReservationDbContext dbContext)
         {
-            _dbContext = new RestaurantReservationDbContext();
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public async Task<int> CreateCustomerAsync(string firstName, string lastName, string email, string phoneNumber)
+        public async Task<List<Customer>> GetCustomersAsync()
         {
-            var newCustomer = new Customer
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                PhoneNumber = phoneNumber
-            };
-
-            _dbContext.Customers.Add(newCustomer);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Customer created with ID: {newCustomer.CustomerId}");
-            return newCustomer.CustomerId;
+            return await _dbContext.Customers.ToListAsync();
         }
 
-        public async Task ReadCustomerAsync(int customerId)
+        public async Task<Customer?> GetCustomerAsync(int customerId, bool includeLists)
         {
-            var customer = await _dbContext.Customers.FindAsync(customerId);
-
-            if (customer == null)
+            if (includeLists)
             {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
+                return await _dbContext.Customers
+                    .Include(c => c.Reservations)
+                    .ThenInclude(r => r.Restaurant)
+                    .Include(c => c.Reservations)
+                    .ThenInclude(r => r.Table)
+                    .Where(c => c.CustomerId == customerId)
+                    .FirstOrDefaultAsync();
             }
-            Console.WriteLine($"Customer found: ID {customer.CustomerId} - {customer.FirstName} {customer.LastName}, Email: {customer.Email}, Phone: {customer.PhoneNumber}");
+            return await _dbContext.Customers
+                .Where(c => c.CustomerId == customerId)
+                .FirstOrDefaultAsync();
         }
 
-        public async Task UpdateCustomerAsync(int customerId, string newEmail, string newPhoneNumber)
+        public void CreateCustomerAsync(Customer customer)
         {
-            var customer = await _dbContext.Customers.FindAsync(customerId);
-            if (customer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
-            }
-            customer.Email = newEmail;
-            customer.PhoneNumber = newPhoneNumber;
-
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Customer {customerId} updated successfully.");
+            _dbContext.Customers.Add(customer);
         }
 
-        public async Task DeleteCustomerAsync(int customerId)
+        public void DeleteCustomerAsync(Customer customer)
         {
-            var customer = await _dbContext.Customers.FindAsync(customerId);
-            if (customer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
-            }
-            _dbContext.Remove(customer);
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Customer {customerId} deleted successfully.");
+            _dbContext.Customers.Remove(customer);
         }
 
         public async Task<List<Customer>> CustomerWithPartySizeGreaterThanAsync(int partySize)
@@ -88,6 +64,11 @@ namespace RestaurantReservation.Db.Repositories
                 .FromSqlRaw("sp_CustomersWithPartySizeGreaterThan @partysize", partySizeParam)
                 .ToListAsync();
             return customers;
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
         }
     }
 }
