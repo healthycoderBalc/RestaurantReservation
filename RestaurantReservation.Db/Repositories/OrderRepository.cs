@@ -60,56 +60,11 @@ namespace RestaurantReservation.Db.Repositories
             }
         }
 
-        public async Task ReadOrderAsync(int orderId)
-        {
-            var order = await _dbContext.Orders.FindAsync(orderId);
-
-            if (order == null)
-            {
-                Console.WriteLine($"Order with ID {orderId} not found.");
-                return;
-            }
-            Console.WriteLine($"Order found: ID {order.OrderId} - Reservation Nº: {order.ReservationId}, Employee: {order.Employee.FirstName} {order.Employee.LastName}, Date: {order.OrderDate}, Total Amount: {order.TotalAmount}");
-        }
-
-        public async Task UpdateOrderAsync(int orderId, int reservationId, int employeeId, DateTime orderDate, decimal totalAmount)
-        {
-            var order = await _dbContext.Orders.FindAsync(orderId);
-            if (order == null)
-            {
-                Console.WriteLine($"Order with ID {orderId} not found.");
-                return;
-            }
-            var newReservation = await _dbContext.Reservations.FindAsync(reservationId);
-            if (newReservation == null)
-            {
-                Console.WriteLine($"Reservation with ID {reservationId} not found.");
-                return;
-            }
-            var newEmployee = await _dbContext.Employees.FindAsync(employeeId);
-
-            if (newEmployee == null)
-            {
-                Console.WriteLine($"Employee with ID {employeeId} not found.");
-                return;
-            }
-
-            order.Reservation = newReservation;
-            order.Employee = newEmployee;
-            order.OrderDate = orderDate;
-            order.TotalAmount = totalAmount;
-
-            _dbContext.SaveChanges();
-            Console.WriteLine($"Order {orderId} updated successfully.");
-        }
-
         public void DeleteOrderAsync(Order order)
         {
             _dbContext.Orders.Remove(order);
         }
-
       
-
         public async Task<bool> ReservationAndEmployeeExistsAsync(int reservationId, int employeeId)
         {
             var reservation = await _dbContext.Reservations

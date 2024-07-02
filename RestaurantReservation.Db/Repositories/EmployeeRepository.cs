@@ -57,43 +57,6 @@ namespace RestaurantReservation.Db.Repositories
             }
         }
 
-        public async Task ReadEmployeeAsync(int employeeId)
-        {
-            var employee = await _dbContext.Employees.FindAsync(employeeId);
-
-            if (employee == null)
-            {
-                Console.WriteLine($"Employee with ID {employeeId} not found.");
-                return;
-            }
-
-            Console.WriteLine($"Employee found: ID {employee.EmployeeId} - {employee.FirstName} {employee.LastName}, Position: {employee.Position}");
-        }
-
-        public async Task UpdateEmployeeAsync(int employeeId, int restaurantId, string firstName, string lastName, string position)
-        {
-            var employee = await _dbContext.Employees.FindAsync(employeeId);
-            var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (employee == null)
-            {
-                Console.WriteLine($"Employee with ID {employeeId} not found.");
-                return;
-            }
-            if (newRestaurant == null)
-            {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return;
-            }
-
-            employee.Restaurant = newRestaurant;
-            employee.FirstName = firstName;
-            employee.LastName = lastName;
-            employee.Position = position;
-
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Employee {employeeId} updated successfully.");
-        }
-
         public void DeleteEmployeeAsync(Employee employee)
         {
 

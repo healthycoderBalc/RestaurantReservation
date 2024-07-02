@@ -8,7 +8,6 @@ namespace RestaurantReservation.Db.Repositories
         Task<List<Reservation>> GetReservationsAsync();
         Task<Reservation?> GetReservationAsync(int reservationId, bool includeOrders);
         Task CreateReservationAsync(int customerId, int restaurantId, int tableId, Reservation reservation);
-        Task UpdateReservationAsync(int reservationId, int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize);
         void DeleteReservationAsync(Reservation reservation);
 
         Task<List<Reservation>> GetReservationsByCustomerAsync(int customerId);

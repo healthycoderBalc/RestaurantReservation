@@ -56,41 +56,6 @@ namespace RestaurantReservation.Db.Repositories
             }
         }
 
-        public async Task ReadMenuItemAsync(int menuItemId)
-        {
-            var menuItem = await _dbContext.MenuItems.FindAsync(menuItemId);
-
-            if (menuItem == null)
-            {
-                Console.WriteLine($"MenuItem with ID {menuItemId} not found.");
-                return;
-            }
-            Console.WriteLine($"MenuItem found: ID {menuItem.MenuItemId} - In Restaurant: {menuItem.Restaurant.Name}, Name: {menuItem.Name}, Description: {menuItem.Description}, ${menuItem.Price}");
-        }
-
-        public async Task UpdateMenuItemAsync(int menuItemId, int restaurantId, string name, string description, decimal price)
-        {
-            var menuItem = await _dbContext.MenuItems.FindAsync(menuItemId);
-            var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (menuItem == null)
-            {
-                Console.WriteLine($"MenuItem with ID {menuItemId} not found.");
-                return;
-            }
-            if (newRestaurant == null)
-            {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return;
-            }
-            menuItem.Restaurant = newRestaurant;
-            menuItem.Name = name;
-            menuItem.Description = description;
-            menuItem.Price = price;
-
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"MenuItem {menuItemId} updated successfully.");
-        }
-
         public void DeleteMenuItemAsync(MenuItem menuItem)
         {
             _dbContext.MenuItems.Remove(menuItem);

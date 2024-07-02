@@ -66,57 +66,6 @@ namespace RestaurantReservation.Db.Repositories
             }
         }
 
-
-        public async Task ReadReservationAsync(int reservationId)
-        {
-            var reservation = await _dbContext.Reservations.FindAsync(reservationId);
-
-            if (reservation == null)
-            {
-                Console.WriteLine($"Reservation with ID {reservationId} not found.");
-                return;
-            }
-            Console.WriteLine($"Reservation found: ID {reservation.ReservationId} - Customer: {reservation.Customer.FirstName} {reservation.Customer.FirstName}, Restaurant: {reservation.Restaurant.Name}, Table: {reservation.Table.TableId}, Date: {reservation.ReservationDate}, Size: {reservation.PartySize}");
-        }
-
-        public async Task UpdateReservationAsync(int reservationId, int customerId, int restaurantId, int tableId, DateTime reservationDate, int partySize)
-        {
-            var reservation = await _dbContext.Reservations.FindAsync(reservationId);
-            if (reservation == null)
-            {
-                Console.WriteLine($"Reservation with ID {reservationId} not found.");
-                return;
-            }
-            var newCustomer = await _dbContext.Customers.FindAsync(customerId);
-            if (newCustomer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
-            }
-            var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-
-            if (newRestaurant == null)
-            {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return;
-            }
-            var newTable = await _dbContext.Tables.FindAsync(tableId);
-
-            if (newTable == null)
-            {
-                Console.WriteLine($"Table with ID {tableId} not found.");
-                return;
-            }
-            reservation.Customer = newCustomer;
-            reservation.Restaurant = newRestaurant;
-            reservation.Table = newTable;
-            reservation.ReservationDate = reservationDate;
-            reservation.PartySize = partySize;
-
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Reservation {reservationId} updated successfully.");
-        }
-
         public void DeleteReservationAsync(Reservation reservation)
         {
             _dbContext.Reservations.Remove(reservation);

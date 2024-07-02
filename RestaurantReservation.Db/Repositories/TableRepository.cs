@@ -57,39 +57,6 @@ namespace RestaurantReservation.Db.Repositories
             }
         }
 
-        public async Task ReadTableAsync(int tableId)
-        {
-            var table = await _dbContext.Tables.FindAsync(tableId);
-
-            if (table == null)
-            {
-                Console.WriteLine($"Table with ID {tableId} not found.");
-                return;
-            }
-            Console.WriteLine($"Table found: ID {table.TableId} - In Restaurant: {table.Restaurant.Name}, Capacity: {table.Capacity}");
-        }
-
-        public async Task UpdateTableAsync(int tableId, int restaurantId, int capacity)
-        {
-            var table = await _dbContext.Tables.FindAsync(tableId);
-            var newRestaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (table == null)
-            {
-                Console.WriteLine($"Table with ID {tableId} not found.");
-                return;
-            }
-            if (newRestaurant == null)
-            {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return;
-            }
-            table.Restaurant = newRestaurant;
-            table.Capacity = capacity;
-
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Table {tableId} updated successfully.");
-        }
-
         public void DeleteTableAsync(Db.Models.Table table)
         {
             _dbContext.Tables.Remove(table);

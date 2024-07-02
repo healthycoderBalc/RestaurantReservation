@@ -52,34 +52,6 @@ namespace RestaurantReservation.Db.Repositories
 
         }
 
-        public async Task ReadRestaurantAsync(int restaurantId)
-        {
-            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-
-            if (restaurant == null)
-            {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return;
-            }
-            Console.WriteLine($"Restaurant found: ID {restaurant.RestaurantId} - {restaurant.Name}, Address: {restaurant.Address}, Opening Hours: {restaurant.OpeningHours}, Phone: {restaurant.PhoneNumber}");
-        }
-
-        public async Task UpdateRestaurantAsync(int restaurantId, string newAddress, string newPhoneNumber, string newOpeningHours)
-        {
-            var restaurant = await _dbContext.Restaurants.FindAsync(restaurantId);
-            if (restaurant == null)
-            {
-                Console.WriteLine($"Restaurant with ID {restaurantId} not found.");
-                return;
-            }
-            restaurant.Address = newAddress;
-            restaurant.PhoneNumber = newPhoneNumber;
-            restaurant.OpeningHours = newOpeningHours;
-
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Restaurant {restaurantId} updated successfully.");
-        }
-
         public void DeleteRestaurantAsync(Restaurant restaurant)
         {
             _dbContext.Restaurants.Remove(restaurant);

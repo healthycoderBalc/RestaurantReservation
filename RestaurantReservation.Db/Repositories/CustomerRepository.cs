@@ -52,33 +52,6 @@ namespace RestaurantReservation.Db.Repositories
             _dbContext.Customers.Add(customer);
         }
 
-        public async Task ReadCustomerAsync(int customerId)
-        {
-            var customer = await _dbContext.Customers.FindAsync(customerId);
-
-            if (customer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
-            }
-            Console.WriteLine($"Customer found: ID {customer.CustomerId} - {customer.FirstName} {customer.LastName}, Email: {customer.Email}, Phone: {customer.PhoneNumber}");
-        }
-
-        public async Task UpdateCustomerAsync(int customerId, string newEmail, string newPhoneNumber)
-        {
-            var customer = await _dbContext.Customers.FindAsync(customerId);
-            if (customer == null)
-            {
-                Console.WriteLine($"Customer with ID {customerId} not found.");
-                return;
-            }
-            customer.Email = newEmail;
-            customer.PhoneNumber = newPhoneNumber;
-
-            await _dbContext.SaveChangesAsync();
-            Console.WriteLine($"Customer {customerId} updated successfully.");
-        }
-
         public void DeleteCustomerAsync(Customer customer)
         {
             _dbContext.Customers.Remove(customer);
